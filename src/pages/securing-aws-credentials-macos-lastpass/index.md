@@ -5,11 +5,11 @@ date: "2018-11-03"
 
 ![LastPass CLI password prompt](./lpass_prompt.png)
 
-One of the sometimes overlooked but incredibly valuable features on Amazon Web Services are roles. Roles allow you to grant access to other AWS resources without the need for providing credentials. That's great for your servers but what about your personal machine? This post demonstrates a way to securely retrieve IAM credentials from LastPass and providing them to the AWS CLI. We will need the following tools: AWS CLI, LastPass CLI (lpass), jq.
+One of the sometimes overlooked but incredibly valuable features of Amazon Web Services are roles. Roles allow you to grant access to other AWS resources without the need for providing credentials. That's great for your servers but what about your personal machine? This post demonstrates a way to securely retrieve IAM credentials from LastPass and providing them to the AWS CLI. We are going to need the following tools: AWS CLI, LastPass CLI (lpass), jq.
 
 ## AWS CLI stores your credentials in plain text
 
-As it turns out AWS CLI by default simply stores your credentials in *plaintext* inside `~/.aws/config`. So anybody with access to your computer can easily steal your IAM credentials. They won't even need neither your local user password nor elevated privileges to do so. That's bad.
+As it turns out AWS CLI by default simply stores your credentials in *plain text* inside `~/.aws/config`. So anybody with access to your computer can easily steal your IAM credentials. Neither your local user password nor elevated privileges are needed. That's bad.
 
 ## How to protect your credentials by using LastPass CLI
 
@@ -30,9 +30,9 @@ Our `~/.aws.config` file before…
 
 ```ini
 [default]
-aws_access_key_id=foo
-aws_secret_access_key=bar
-region=us-west-2
+aws_access_key_id = foo
+aws_secret_access_key = bar
+region = us-west-2
 ```
 
 and after:
@@ -40,14 +40,14 @@ and after:
 ```ini
 [default]
 credential_process = /path/to/script
-region=us-west-2
+region = us-west-2
 ```
 
 Now all we need to do is write a script that calls *lpass* and retrieves our IAM credentials from our LastPass entry.
 
 ### But wait! We do need to provide our response as JSON
 
-Jq to the rescue. In case you haven't heard of it, [jq is a command line tool for parsing and creating JSON]((https://stedolan.github.io/jq/)). We are using it to create a JSON object from the *lpass* response.
+Jq to the rescue. In case you haven't used it before, [jq is a command line tool for parsing and creating JSON]((https://stedolan.github.io/jq/)). We are using it to create a JSON object from the *lpass* response.
 
 ```bash
 #!/bin/bash
@@ -75,7 +75,7 @@ Our created JSON object will look something like the following:
 }
 ```
 
-We are saving our script as *awscreds-lpass.sh*, store it inside the `~/.aws/` folder and set permissions to make it executable by our local user.
+We are saving our script as *awscreds-lpass.sh*, store it inside the `~/.aws` folder and set permissions to make it executable by our local user.
 
 ```bash
 chmod 750 ~/.aws/awscreds-lpass.sh
@@ -86,14 +86,14 @@ Then we are replacing our `~/.aws/config` file with the following:
 ```ini
 [default]
 credential_process = /Users/<your-user-name>/.aws/awscreds-lpass.sh
-region=us-west-2
+region = us-west-2
 ```
 
 Make sure to replace the placeholder with your macOS user name.
 
 ## Customizing master password prompt timeout
 
-By default the LastPass CLI agent will store your credentials for one hour and then quit. If you are using the AWS CLI a lot this would mean retyping your LastPass master password every hour. Fortunately [there is a way to customize the timeout window](https://lastpass.github.io/lastpass-cli/lpass.1.html) by defining an environment variable `LPASS_AGENT_TIMEOUT` and specifying the timeout length in seconds.
+By default the LastPass CLI agent will store your credentials for one hour. After that you will be prompted to provide your master password the next time you are running *lpass*. If you are using the AWS CLI a lot this would mean retyping your LastPass master password every hour. Fortunately [there is a way to customize the timeout window](https://lastpass.github.io/lastpass-cli/lpass.1.html) by defining an environment variable `LPASS_AGENT_TIMEOUT` and specifying the timeout length in seconds.
 
 I have added this to my `~/.bash_profile`:
 
@@ -103,6 +103,6 @@ export LPASS_AGENT_TIMEOUT=28800
 
 ## Wrapping up
 
-One caveat to this approach: If you are running the AWS CLI outside of a Shell, e.g. in task runner within your editor, you might get an error if the timeout window has passed. In this case it should be sufficient to run an AWS CLI command in a Shell, enter your password and than use your task runner as long as the current timeout window has not been closed.
+One caveat to this approach: If you are running the AWS CLI outside of a Terminal, e.g. in a task runner within your editor, you might get an error if the timeout window has passed. In this case it should be sufficient to run any AWS CLI command in an interactive Shell, enter your password and than use your task runner as long as the current timeout window has not been closed.
 
 I have [published a slightly tweaked script](https://gist.github.com/paulgalow/109bdc118ec6d884b0f7d5d152920fd5) including some error handling. Based on this approach it should be easy to adapt this process to a different password manager such as the built-in macOS keychain (using the `security` command).
