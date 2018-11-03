@@ -1,0 +1,16 @@
+# Global settings applied to the whole site.
+# "base" is a directory to change to before starting build, and
+# "publish" is the directory to publish (relative to root of your repo).
+# "command" is your build command
+[build]
+    base    = ""
+    publish = "public"
+    command = "npm run build"
+
+# We’ll need to handle requests to any non-root paths of our app.
+# Our frontend is a single-page app and the routing is handled on the client side.
+# We need to tell Netlify to always redirect any request to our index.html and return the 200 status code for it.
+[[redirects]]
+    from    = "/*"
+    to      = "/index.html"
+    status  = 200
