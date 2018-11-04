@@ -1,5 +1,5 @@
 ---
-title: "Securing AWS credentials on macOS with LastPass CLI"
+title: "Securing AWS CLI credentials on macOS with LastPass CLI"
 date: "2018-11-03"
 ---
 
