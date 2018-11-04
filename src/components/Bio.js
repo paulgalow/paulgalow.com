@@ -29,13 +29,13 @@ class Bio extends React.Component {
           style={{
             marginRight: rhythm(1 / 2),
             marginBottom: 0,
-            width: rhythm(2),
-            height: rhythm(2),
+            width: rhythm(3),
+            height: rhythm(3),
           }}
         />
         <p>
-          My name is <strong>Paul Galow</strong>, and I'm an engineer based in
-          Berlin. <br />
+          Hi, I'm Paul Galow, and I'm an engineer based in
+          Berlin focussing on DevOps, macOS administration and video engineering.<br />
           <a href={gitHubUrl} style={{boxShadow: 'none'}}>
             <img
               src={gitHubPic}
