@@ -13,7 +13,7 @@ As it turns out AWS CLI by default simply stores your credentials in *plain text
 
 ## How to protect your credentials by using LastPass CLI
 
-Turns out there is an easy way to protect your credentials from theft using LastPass. I have been using it to manage credentials for some time. But I only recently started using the [LastPass command line interface tool](https://github.com/lastpass/lastpass-cli). With it we can retrieve any username and password from the command line by using the `lpass` command.
+Turns out there is an easy way to protect your credentials from theft using LastPass. I have been using it to manage credentials for some time. But I only recently started using the [LastPass command line interface tool](https://github.com/lastpass/lastpass-cli). You can install it with [Homebrew](https://brew.sh/) by running `brew install lastpass-cli --with-pinentry`. With it we can retrieve any username and password from the command line by using the `lpass` command.
 
 For example: Let's say we want to retrieve a username and password from a LastPass entry named *AWS IAM credentials*. We would do so by running:
 
@@ -47,7 +47,7 @@ Now all we need to do is write a script that calls *lpass* and retrieves our IAM
 
 ### But wait! We do need to provide our response as JSON
 
-Jq to the rescue. In case you haven't used it before, [jq is a command line tool for parsing and creating JSON]((https://stedolan.github.io/jq/)). We are using it to create a JSON object from the *lpass* response.
+Jq to the rescue. In case you haven't used it before, [jq is a command line tool for parsing and creating JSON](https://stedolan.github.io/jq/). I have first learned about it earlier this year during one of [Victor Vrantchan's talks at MacDevOpsYVR](https://www.youtube.com/watch?v=RAmc2RC4llI&feature=youtu.be&t=1381). You can install it by running `brew install jq`. We are using it to create a JSON object from the *lpass* response.
 
 ```bash
 #!/bin/bash
