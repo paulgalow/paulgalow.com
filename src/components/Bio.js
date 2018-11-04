@@ -34,8 +34,9 @@ class Bio extends React.Component {
           }}
         />
         <p>
-          Hi, I'm Paul Galow, and I'm an engineer based in
-          Berlin focussing on DevOps, macOS administration and video engineering.<br />
+          Hi, I'm Paul Galow, and I'm an engineer based in Berlin working in
+          DevOps, macOS administration and video engineering.
+          <br />
           <a href={gitHubUrl} style={{boxShadow: 'none'}}>
             <img
               src={gitHubPic}
