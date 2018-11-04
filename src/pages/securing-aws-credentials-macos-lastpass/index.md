@@ -75,7 +75,7 @@ Our created JSON object will look something like the following:
 }
 ```
 
-We are saving our script as *awscreds-lpass.sh*, store it inside the `~/.aws` folder and set permissions to make it executable by our local user.
+We are saving our script as *awscreds-lpass.sh*, store it inside the `~/.aws` folder and set permissions to make it executable.
 
 ```bash
 chmod 750 ~/.aws/awscreds-lpass.sh
@@ -89,7 +89,7 @@ credential_process = /Users/<your-user-name>/.aws/awscreds-lpass.sh
 region = us-west-2
 ```
 
-Make sure to replace the placeholder with your macOS user name.
+Make sure to replace `<your-user-name>` with your macOS user name, which can be retrieved by running `id -un`.
 
 ## Customizing master password prompt timeout
 
@@ -103,6 +103,6 @@ export LPASS_AGENT_TIMEOUT=28800
 
 ## Wrapping up
 
-One caveat to this approach: If you are running the AWS CLI outside of a Terminal, e.g. in a task runner within your editor, you might get an error if the timeout window has passed. In this case it should be sufficient to run any AWS CLI command in an interactive Shell, enter your password and than use your task runner as long as the current timeout window has not been closed.
+One caveat to this approach: If you are running AWS CLI outside of a Terminal, e.g. in a task runner within your editor, you might get an error if the timeout window has passed. In this case it should be sufficient to run any AWS CLI command in an interactive Shell, enter your password and than use your task runner as long as the current timeout window has not been closed.
 
 I have [published a slightly tweaked script](https://gist.github.com/paulgalow/109bdc118ec6d884b0f7d5d152920fd5) including some error handling. Based on this approach it should be easy to adapt this process to a different password manager such as the built-in macOS keychain (using the `security` command).
