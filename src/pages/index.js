@@ -21,6 +21,7 @@ class BlogIndex extends React.Component {
         <Helmet
           htmlAttributes={{ lang: 'en' }}
           meta={[{ name: 'description', content: siteDescription }]}
+          meta={[{ name: 'referrer', content: 'no-referrer'}]}
           title={siteTitle}
         />
         <Bio />
