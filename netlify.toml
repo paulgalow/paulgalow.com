@@ -2,10 +2,10 @@
 # "base" is a directory to change to before starting build, and
 # "publish" is the directory to publish (relative to root of your repo).
 # "command" is your build command
-[build]
-    base    = ""
-    publish = "public"
-    command = "npm run build"
+# [build]
+#     base    = ""
+#     publish = "public"
+#     command = "npm run build"
 
 # We’ll need to handle requests to any non-root paths of our app.
 # Our frontend is a single-page app and the routing is handled on the client side.
