@@ -1,4 +1,5 @@
 ---
+slug: download-album-art-with-albumart-dl
 title: "Download album art from Apple with albumart-dl"
 date: "2018-12-02"
 ---
