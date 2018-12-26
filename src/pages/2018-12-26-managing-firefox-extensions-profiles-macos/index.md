@@ -4,7 +4,7 @@ title: "Managing Firefox extensions via configuration profiles on macOS"
 date: "2018-12-26"
 ---
 
-In this post we are leveraging the `Extensions` and `InstallAddonsPermission` configuration profile keys to manage Firefox extensions. As an example we are going to deploy the fantastic [uBlock Origin](https://addons.mozilla.org/firefox/addon/ublock-origin/) extension using a profile. Once that's in place Firefox will automatically install the extension.
+In this post we are leveraging the *Extensions* and *InstallAddonsPermission* configuration profile keys to manage Firefox extensions. As an example we are going to deploy the fantastic [uBlock Origin](https://addons.mozilla.org/firefox/addon/ublock-origin/) extension using a profile. Once that's in place Firefox will automatically install the extension.
 
 Up until recently a [common way to manage Firefox settings/policies](https://www.amsys.co.uk/using-firefox-cck2-and-autopkg/) was to create a custom `autoconfig.zip` file as part of your Firefox deployment using the [CCK2 tool](https://mike.kaply.com/cck2/) and building a custom deployment package. Thankfully AutoPkg and some [fellow Mac admins](https://github.com/autopkg/gregneagle-recipes/tree/master/Mozilla) have made this potentially labor-intensive process much easier (and automated).
 
