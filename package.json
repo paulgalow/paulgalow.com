@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "private": true,
   "dependencies": {
-    "gatsby": "^2.0.75",
+    "gatsby": "^2.0.76",
     "gatsby-cli": "^2.4.7",
     "gatsby-plugin-feed": "^2.0.11",
     "gatsby-plugin-google-analytics": "^2.0.8",
@@ -15,7 +15,7 @@
     "gatsby-plugin-slug": "^1.0.1",
     "gatsby-plugin-typography": "^2.2.4",
     "gatsby-remark-copy-linked-files": "^2.0.8",
-    "gatsby-remark-images": "^2.0.6",
+    "gatsby-remark-images": "^3.0.1",
     "gatsby-remark-prismjs": "^3.1.4",
     "gatsby-remark-responsive-iframe": "^2.0.8",
     "gatsby-remark-smartypants": "^2.0.7",
@@ -28,15 +28,15 @@
     "react-dom": "^16.7.0",
     "react-helmet": "^5.2.0",
     "react-typography": "^0.16.18",
-    "typeface-merriweather": "0.0.43",
-    "typeface-montserrat": "0.0.43",
+    "typeface-merriweather": "0.0.54",
+    "typeface-montserrat": "0.0.54",
     "typography": "^0.16.18",
-    "typography-theme-wordpress-2016": "^0.15.10"
+    "typography-theme-wordpress-2016": "^0.16.18"
   },
   "devDependencies": {
-    "eslint": "^4.19.1",
+    "eslint": "^5.11.0",
     "eslint-plugin-react": "^7.11.1",
-    "gh-pages": "^1.2.0",
+    "gh-pages": "^2.0.1",
     "prettier": "^1.15.3"
   },
   "scripts": {
