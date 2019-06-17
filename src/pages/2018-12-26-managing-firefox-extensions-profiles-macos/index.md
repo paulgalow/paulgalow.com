@@ -55,7 +55,7 @@ Firefox' `Extensions` profile key expects a URL pointing to an XPI file. This is
 
 Turns out the Firefox API intelligently reroutes requests to the latest version of the extension if we don't specify a particular version:
 
-```bash
+```shell-session
 curl -I https://addons.mozilla.org/firefox/downloads/file/1166954/ublock_origin.xpi
 ```
 
@@ -70,13 +70,13 @@ Perfect. Now, all we need to do is to remove the version information from our XP
 
 From:
 
-```url
+```shell-session
 https://addons.mozilla.org/firefox/downloads/file/1166954/ublock_origin-1.17.4-an+fx.xpi?src=version-history
 ```
 
 To:
 
-```url
+```shell-session
 https://addons.mozilla.org/firefox/downloads/file/1166954/ublock_origin.xpi
 ```
 
