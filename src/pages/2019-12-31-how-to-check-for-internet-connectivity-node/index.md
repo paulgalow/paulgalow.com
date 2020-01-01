@@ -80,7 +80,7 @@ checkHTTP("https://1.1.1.1")
 
 Still failing? Let's try if we can make a TCP connection on a different port than 443 to rule out a firewall issue.
 
-[Here is an example](https://gist.github.com/paulgalow/d33599630f139e600fd5a39a2dfec1bc) of how you can establish a TCP connection. We are declaring a function that takes a host and a port as inputs. A host can be a fully qualified domain name or an IP address. If no inputs are provided, it will default to **"1.1.1.1"** for the host and `53` (DNS) for the port.
+[Here is an example](https://gist.github.com/paulgalow/d33599630f139e600fd5a39a2dfec1bc) of how you can establish a TCP connection. We are declaring a function that takes a host and a port as inputs. A host can be a fully qualified domain name or an IP address. If no inputs are provided, it will default to **"1.1.1.1"** for the host and `53` (DNS) for the port. Note: DNS typically runs over UDP but DNS resolvers often also support TCP.
 
 ```js
 const { createConnection } = require("net");
