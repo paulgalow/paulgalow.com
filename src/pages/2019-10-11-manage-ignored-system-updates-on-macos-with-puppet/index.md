@@ -1,7 +1,7 @@
 ---
 slug: managing-ignored-system-updates-on-macos-with-puppet
-title: 'Managing ignored system updates on macOS with Puppet'
-date: '2019-10-11'
+title: "Managing ignored system updates on macOS with Puppet"
+date: "2019-10-11"
 ---
 
 ![Catalina upgrade prompt in macOS Mojave](./pexels-photo-555709.jpeg "Photo: 'Danger Stay Back Signage' by Danne | Pexels.com")
@@ -42,7 +42,7 @@ Soon after, thanks to [Robert Hamman](https://twitter.com/hammen/status/11812952
 and [Rich Trouton](https://derflounder.wordpress.com/2019/10/07/preventing-the-macos-catalina-upgrade-advertisement-from-appearing-in-the-software-update-preference-pane-on-macos-mojave/)
 I learned that indeed, this is possible:
 
-```shell
+```shellscript
 softwareupdate --ignore "macOS Catalina"
 ```
 
@@ -58,7 +58,7 @@ installing Catalina via the App Store.
 Once you're ready to go ahead with the latest and greatest macOS, run the
 following to bring back the upgrade banner (and reset any other ignored updates):
 
-```shell
+```shellscript
 softwareupdate --reset-ignored
 ```
 

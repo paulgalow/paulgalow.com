@@ -1,18 +1,18 @@
 module.exports = {
   siteMetadata: {
-    title: 'Paul Galow',
-    author: 'Paul Galow',
-    description: 'A personal blog.',
-    siteUrl: 'https://paulgalow.com',
+    title: "Paul Galow",
+    author: "Paul Galow",
+    description: "A personal blog.",
+    siteUrl: "https://paulgalow.com"
   },
-  pathPrefix: '/gatsby-starter-blog',
+  pathPrefix: "/gatsby-starter-blog",
   plugins: [
     {
       resolve: `gatsby-source-filesystem`,
       options: {
         path: `${__dirname}/src/pages`,
-        name: 'pages',
-      },
+        name: "pages"
+      }
     },
     {
       resolve: `gatsby-transformer-remark`,
@@ -24,20 +24,25 @@ module.exports = {
               maxWidth: 650,
               linkImagesToOriginal: false,
               showCaptions: true,
-              withWebp: true,
-            },
+              withWebp: true
+            }
           },
           {
             resolve: `gatsby-remark-responsive-iframe`,
             options: {
-              wrapperStyle: `margin-bottom: 1.0725rem`,
-            },
+              wrapperStyle: `margin-bottom: 1.0725rem`
+            }
           },
-          'gatsby-remark-prismjs',
-          'gatsby-remark-copy-linked-files',
-          'gatsby-remark-smartypants',
-        ],
-      },
+          {
+            resolve: `gatsby-remark-vscode`,
+            options: {
+              theme: "Default Dark+"
+            }
+          },
+          "gatsby-remark-copy-linked-files",
+          "gatsby-remark-smartypants"
+        ]
+      }
     },
     `gatsby-transformer-sharp`,
     `gatsby-plugin-sharp`,
@@ -72,9 +77,9 @@ module.exports = {
                   date: edge.node.frontmatter.date,
                   url: site.siteMetadata.siteUrl + edge.node.fields.slug,
                   guid: site.siteMetadata.siteUrl + edge.node.fields.slug,
-                  custom_elements: [{ 'content:encoded': edge.node.html }],
-                })
-              })
+                  custom_elements: [{ "content:encoded": edge.node.html }]
+                });
+              });
             },
             query: `
               {
@@ -95,11 +100,11 @@ module.exports = {
                 }
               }
             `,
-            output: '/rss.xml',
-            title: 'Paul Galow',
-          },
-        ],
-      },
+            output: "/rss.xml",
+            title: "Paul Galow"
+          }
+        ]
+      }
     },
     {
       resolve: `gatsby-plugin-manifest`,
@@ -110,17 +115,17 @@ module.exports = {
         background_color: `#ffffff`,
         theme_color: `#663399`,
         display: `minimal-ui`,
-        icon: `src/assets/logo-bright.png`,
-      },
+        icon: `src/assets/logo-bright.png`
+      }
     },
     `gatsby-plugin-offline`,
     `gatsby-plugin-react-helmet`,
     `gatsby-plugin-sitemap`,
     {
-      resolve: 'gatsby-plugin-typography',
+      resolve: "gatsby-plugin-typography",
       options: {
-        pathToConfigModule: 'src/utils/typography',
-      },
-    },
-  ],
-}
+        pathToConfigModule: "src/utils/typography"
+      }
+    }
+  ]
+};

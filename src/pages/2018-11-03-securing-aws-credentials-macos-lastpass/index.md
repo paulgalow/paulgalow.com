@@ -10,13 +10,13 @@ One of the sometimes overlooked but incredibly valuable features of Amazon Web S
 
 ## AWS CLI stores your credentials in plain text
 
-As it turns out AWS CLI by default simply stores your credentials in *plain text* inside `~/.aws/config`. So anybody with access to your computer can easily steal your IAM credentials. Neither your local user password nor elevated privileges are needed. That's bad.
+As it turns out AWS CLI by default simply stores your credentials in _plain text_ inside `~/.aws/config`. So anybody with access to your computer can easily steal your IAM credentials. Neither your local user password nor elevated privileges are needed. That's bad.
 
 ## How to protect your credentials by using LastPass CLI
 
 Turns out there is an easy way to protect your credentials from theft using LastPass. I have been using it to manage credentials for some time. But I only recently started using the [LastPass command line interface tool](https://github.com/lastpass/lastpass-cli). You can install it with [Homebrew](https://brew.sh/) by running `brew install lastpass-cli --with-pinentry`. With it we can retrieve any username and password from the command line by using the `lpass` command.
 
-For example: Let's say we want to retrieve a username and password from a LastPass entry named *AWS IAM credentials*. We would do so by running:
+For example: Let's say we want to retrieve a username and password from a LastPass entry named _AWS IAM credentials_. We would do so by running:
 
 ```bash
 lpass show --username "AWS IAM credentials"
@@ -29,7 +29,7 @@ While browsing the [AWS CLI Command Reference](https://docs.aws.amazon.com/cli/l
 
 Our `~/.aws.config` file before…
 
-```ini
+```properties
 [default]
 aws_access_key_id = foo
 aws_secret_access_key = bar
@@ -38,17 +38,17 @@ region = us-west-2
 
 and after:
 
-```ini
+```properties
 [default]
 credential_process = /path/to/script
 region = us-west-2
 ```
 
-Now all we need to do is write a script that calls *lpass* and retrieves our IAM credentials from our LastPass entry.
+Now all we need to do is write a script that calls _lpass_ and retrieves our IAM credentials from our LastPass entry.
 
 ### But wait! We do need to provide our response as JSON
 
-Jq to the rescue. In case you haven't used it before, [jq is a command line tool for parsing and creating JSON](https://stedolan.github.io/jq/). I have first learned about it earlier this year during one of [Victor Vrantchan's talks at MacDevOpsYVR](https://www.youtube.com/watch?v=RAmc2RC4llI&feature=youtu.be&t=1381). You can install it by running `brew install jq`. We are using it to create a JSON object from the *lpass* response.
+Jq to the rescue. In case you haven't used it before, [jq is a command line tool for parsing and creating JSON](https://stedolan.github.io/jq/). I have first learned about it earlier this year during one of [Victor Vrantchan's talks at MacDevOpsYVR](https://www.youtube.com/watch?v=RAmc2RC4llI&feature=youtu.be&t=1381). You can install it by running `brew install jq`. We are using it to create a JSON object from the _lpass_ response.
 
 ```bash
 #!/bin/bash
@@ -76,7 +76,7 @@ Our created JSON object will look something like the following:
 }
 ```
 
-We are saving our script as *awscreds-lpass.sh*, store it inside the `~/.aws` folder and set permissions to make it executable.
+We are saving our script as _awscreds-lpass.sh_, store it inside the `~/.aws` folder and set permissions to make it executable.
 
 ```bash
 chmod 750 ~/.aws/awscreds-lpass.sh
@@ -84,7 +84,7 @@ chmod 750 ~/.aws/awscreds-lpass.sh
 
 Then we are replacing our `~/.aws/config` file with the following:
 
-```ini
+```properties
 [default]
 credential_process = /Users/<your-user-name>/.aws/awscreds-lpass.sh
 region = us-west-2
@@ -94,7 +94,7 @@ Make sure to replace `<your-user-name>` with your macOS user name, which can be 
 
 ## Customizing master password prompt timeout
 
-By default the LastPass CLI agent will store your credentials for one hour. After that you will be prompted to provide your master password the next time you are running *lpass*. If you are using the AWS CLI a lot this would mean retyping your LastPass master password every hour. Fortunately [there is a way to customize the timeout window](https://lastpass.github.io/lastpass-cli/lpass.1.html) by defining an environment variable `LPASS_AGENT_TIMEOUT` and specifying the timeout length in seconds.
+By default the LastPass CLI agent will store your credentials for one hour. After that you will be prompted to provide your master password the next time you are running _lpass_. If you are using the AWS CLI a lot this would mean retyping your LastPass master password every hour. Fortunately [there is a way to customize the timeout window](https://lastpass.github.io/lastpass-cli/lpass.1.html) by defining an environment variable `LPASS_AGENT_TIMEOUT` and specifying the timeout length in seconds.
 
 I have added this to my `~/.bash_profile`:
 

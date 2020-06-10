@@ -7,7 +7,7 @@ date: "2019-01-26"
 ![Before, After](./before-after.png)
 
 Have you ever transferred a bunch of photos/videos from an iOS device using AirDrop?
-If so you will have noticed the odd file names of those items on your Mac, such as *IMG_0144.JPG*.
+If so you will have noticed the odd file names of those items on your Mac, such as _IMG_0144.JPG_.
 
 What's worse: The numbers attached to each file don't correspond to the sequence of events during which they were taken. You might think you could browse those files chronologically in your browser simply by sorting them by name. But at least in my testing, that is not necessarily the case.
 
@@ -17,7 +17,7 @@ What if you wanted to browse your photos and videos in the Finder in chronologic
 
 But what if I you don't want to use a specialized media management tool? Turns out we can leverage [macOS Mojave's Quick Actions](https://www.macrumors.com/how-to/use-quick-actions-in-macos-mojave/) to get the job done directly from Finder. The following Quick Action is inspired by [Armin Briegel's excellent blog post](https://scriptingosx.com/2018/11/mojave-quick-action-to-package-apps/).
 
-At the core of our solution is Apple's built-in *mdls* tool. With that, we can retrieve the metadata we are interested in, in this case, ```kMDItemContentCreationDate```.
+At the core of our solution is Apple's built-in _mdls_ tool. With that, we can retrieve the metadata we are interested in, in this case, `kMDItemContentCreationDate`.
 
 ```bash
 getTimeStamp() {
@@ -26,9 +26,9 @@ getTimeStamp() {
 }
 ```
 
-Using this tool in a  Quick Action we can turn our file names from:
+Using this tool in a Quick Action we can turn our file names from:
 
-```bash
+```shellscript
 .
 ├── IMG_0018.MOV
 ├── IMG_0144.JPG
@@ -39,7 +39,7 @@ Using this tool in a  Quick Action we can turn our file names from:
 
 into
 
-```bash
+```shellscript
 .
 ├── 2018-12-12 07-54-04.mov
 ├── 2018-12-12 07-54-21.jpg
@@ -52,17 +52,17 @@ Please note the resulting timestamps are UTC based.
 
 ## Creating a Quick Action in Automator
 
-To get started, open up Apple's *Automator* and create a new Quick Action.
+To get started, open up Apple's _Automator_ and create a new Quick Action.
 
 ![New Quick Action](./new-quick-action.png)
 
-Make sure our Quick Action receives *files or folders* in *any application*. We can customize the image which will be displayed in Finder later on. Next, drag a new *Run Shell Script* action from the sidebar to the empty area below.
+Make sure our Quick Action receives _files or folders_ in _any application_. We can customize the image which will be displayed in Finder later on. Next, drag a new _Run Shell Script_ action from the sidebar to the empty area below.
 
 ![Run Shell Script](./run-shell-script.png)
 
 ## Handling images and videos
 
-Since we want to handle images or videos we cannot use Automator's built-in input selection. That only allows us to choose between image or movie files. To work around this issue we are going to handle input validation directly inside our Shell script. Using the *file* command we are extracting a file's MIME type. The supported MIME types for this Quick Action are *image/jpeg* and *video/quicktime*. Using that information we can guard our script against processing unwanted files that might reside inside the same folder as our photo or video files.
+Since we want to handle images or videos we cannot use Automator's built-in input selection. That only allows us to choose between image or movie files. To work around this issue we are going to handle input validation directly inside our Shell script. Using the _file_ command we are extracting a file's MIME type. The supported MIME types for this Quick Action are _image/jpeg_ and _video/quicktime_. Using that information we can guard our script against processing unwanted files that might reside inside the same folder as our photo or video files.
 
 ```bash
 hasMIMEType() {
@@ -84,7 +84,7 @@ setFileExtension() {
 
 ## Non-destructive behavior
 
-To minimize the risk of potential data loss our Quick Action is trying hard to act non-destructively. It creates a subfolder named *sorted* inside the folder where it is applied and copies the renamed media files to this new location. The result is a second, separate copy of our files.
+To minimize the risk of potential data loss our Quick Action is trying hard to act non-destructively. It creates a subfolder named _sorted_ inside the folder where it is applied and copies the renamed media files to this new location. The result is a second, separate copy of our files.
 
 ```bash
 createDestination() {
@@ -134,6 +134,6 @@ sendNotification "Processing photos/videos.\\nThis can take a while…"
 
 ## Finishing up and handling installation
 
-To finish up, [copy the script's code](https://gist.github.com/paulgalow/70bff79dcf1f4a0ec74ccff6e50e1bc9) into Automator's *Run Shell Script* section. Finally, you can export our Quick Action and save it as a workflow file.
+To finish up, [copy the script's code](https://gist.github.com/paulgalow/70bff79dcf1f4a0ec74ccff6e50e1bc9) into Automator's _Run Shell Script_ section. Finally, you can export our Quick Action and save it as a workflow file.
 
-Installing is as easy as double-clicking the resulting \*.workflow bundle. If you want to deploy this to other Macs, place the bundle inside ```~/Library/Services/```. You could create a package to do that. Once that's been done you can directly access your Quick Action from Finder.
+Installing is as easy as double-clicking the resulting \*.workflow bundle. If you want to deploy this to other Macs, place the bundle inside `~/Library/Services/`. You could create a package to do that. Once that's been done you can directly access your Quick Action from Finder.
