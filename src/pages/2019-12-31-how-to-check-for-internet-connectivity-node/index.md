@@ -33,7 +33,7 @@ function checkHTTP(url) {
     const lib = protocol === "https:" ? require("https") : require("http");
 
     const request = lib.get(url, response => {
-      console.log(`HTTP Status Code:`, response.statusCode);
+      console.log("HTTP Status Code:", response.statusCode);
       resolve(response);
     });
 
