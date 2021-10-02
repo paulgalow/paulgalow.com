@@ -59,7 +59,7 @@ services:
       - "1935:1935" # RTMP and HLS streaming
       - "8086-8088:8086-8088" # Administration
       - "8089:8089" # REST API documentation server
-      - "8090:8090" # HTTPS for Wowza Streaming Engine Manager webinterface
+      - "8090:8090" # HTTPS for Wowza Streaming Engine Manager (web interface)
     volumes:
       - ./applications:/usr/local/WowzaStreamingEngine/applications
       - ./conf:/usr/local/WowzaStreamingEngine/conf
