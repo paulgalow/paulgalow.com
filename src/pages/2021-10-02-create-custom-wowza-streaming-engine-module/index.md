@@ -224,7 +224,7 @@ Next, we need to add our module to a WSE application. In this case, we are using
 +      </Module>
     </Modules>
     …
-  <Application/>
+  </Application>
 </Root>
 ```
 
