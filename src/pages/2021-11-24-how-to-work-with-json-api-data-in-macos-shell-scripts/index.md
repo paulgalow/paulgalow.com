@@ -46,7 +46,7 @@ So a minimal implementation would look something like this:
 osascript -l 'JavaScript' -e "($1.$2);"
 ```
 
-Here, all we do is implicitly return a key's value (defined in _$2_) of whatever variable has been passed into the JavaScript execution context by our shell runtime (_$1_). We don't even need to use the _return_ keyword or JXA's special _run()_ function. JavaScript is flexible! Great. But there is a catch!
+Here, all we do is implicitly return a key's value (defined in _$2_) of whatever variable has been passed into the JavaScript execution context by our shell runtime (_$1_). We don't even need to use the _return_ keyword or JXA's special _run()_ function. JavaScript is flexible! Great. But there is a catch …
 
 ## 👾 Remote code execution vulnerability
 
