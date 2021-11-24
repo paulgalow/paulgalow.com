@@ -87,7 +87,7 @@ getJsonValue() {
 +  get name() {
 +    const app = Application.currentApplication();
 +    app.includeStandardAdditions = true;
-+    app.displayAlert("👾");
++    app.displayAlert("👾🔥🙈");
 +  }
 +}'
 
