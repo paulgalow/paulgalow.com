@@ -97,6 +97,8 @@ echo "$fullName" # Custom JavaScript code is being executed instead 👾
 
 In this scenario, our attacker would have the opportunity to _execute any arbitrary JavaScript code supported by JXA_. Here, all they are doing is displaying an alert, but you can easily imagine more nefarious purposes.
 
+I have [recorded a short video](https://www.youtube.com/watch?v=jWbexKhkEn8) for illustration purposes.
+
 <!-- markdownlint-disable MD033 -->
 <video style="width: 100%" preload="metadata" controls muted loop>
   <source src="../rce-exploit-demo.mp4" type="video/mp4">
@@ -223,3 +225,5 @@ getJsonValue "$data" results[0].releaseDate
 Turns out we can! Be aware that _jsc_ will return `undefined` if a key cannot be found.
 
 Caveat: I would hesitate to rely on this tool in production scripts since we are using a command-line tool somewhat hidden inside an Apple System Framework. Knowing Apple, APIs like that might change unexpectedly. So keep that in mind!
+
+Have I missed anything? If so, please let me know!
