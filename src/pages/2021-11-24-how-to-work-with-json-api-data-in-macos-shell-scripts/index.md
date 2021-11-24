@@ -59,6 +59,8 @@ Turns out by not using _JSON.parse()_ we are enabling a potential backdoor for a
 Suppose we are calling an external API to get a user's full name:
 
 ```sh
+# ⚠️ Warning: This code snippet is not safe to use!
+
 getJsonValue() {
   # $1: JSON string to process, $2: Desired JSON key
   osascript -l 'JavaScript' -e "($1.$2);"
@@ -75,6 +77,8 @@ echo "$fullName" # Returns: 'Leanne Graham'
 So far, so good. Now, let's simulate a scenario in which an attacker has managed to intercept and replace our JSON response data with some _carefully crafted_ JavaScript code:
 
 ```sh{diff}
+# ⚠️ Warning: This code snippet is not safe to use!
+
 getJsonValue() {
   # $1: JSON string to process, $2: Desired JSON key
   osascript -l 'JavaScript' -e "($1.$2);"
