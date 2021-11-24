@@ -216,7 +216,7 @@ Craig Hockenberry [recently wrote about](https://furbo.org/2021/08/25/jsc-my-new
 ```sh
 getJsonValue() {
   # $1: JSON string to process, $2: Desired JSON key
-  # Will return 'undefined' if key can not be found
+  # Will return 'undefined' if key cannot be found
   /System/Library/Frameworks/JavaScriptCore.framework/Versions/Current/Helpers/jsc \
   -e "print(JSON.parse(\`$1\`).$2);"
 }
