@@ -20,7 +20,7 @@ getJsonValue() {
 
 data=$(curl -sS '<http-api-url>')
 
-myValue=$(getJsonValue "$data" <json-key>)
+myValue=$(getJsonValue "$data" "<json-key>")
 
 echo "$myValue"
 ```
