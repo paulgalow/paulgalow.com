@@ -223,7 +223,8 @@ getJsonValue() {
 
 data=$(curl -sS 'https://itunes.apple.com/search?term=steely+dan+pretzel+logic&entity=album')
 
-getJsonValue "$data" results[0].releaseDate
+releaseDate=$(getJsonValue "$data" "results[0].releaseDate")
+echo "$releaseDate" # Returns: '1974-01-01T08:00:00Z'
 ```
 
 Turns out we can! Be aware that _jsc_ will return `undefined` if a key cannot be found.
