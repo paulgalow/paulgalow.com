@@ -111,9 +111,9 @@ I have [recorded a short video](https://www.youtube.com/watch?v=jWbexKhkEn8) for
 
 So how can we protect against this threat? That's where _JSON.parse()_ comes into play. Using it, we make sure to parse valid JSON only. If the incoming string is not JSON, this method call will throw an error.
 
-But there is more: Since the value of our first expanded shell variable (_$1_) will likely be a multi-line string (which is very common when working with JSON), we need to make sure we can handle those. JavaScript provides a special syntax using backticks (`) to create [template literals](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Template_literals). Using those, we can expand multi-line strings into our JXA execution context without it throwing an error.
+But there is more: Since the value of our first expanded shell variable `$1` will likely be a multi-line string (which is very common when working with JSON), we need to make sure we can handle those. JavaScript provides a special syntax using backticks (_`_) to create [template literals](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Template_literals). Using those, we can expand multi-line strings into our JXA execution context without it throwing an error.
 
-But aren't backticks special characters in shell scripts? Indeed. So we need to escape them (\`) to ensure our shell runtime does not evaluate them as shell expressions.
+But aren't backticks special characters in shell scripts? Indeed. So we need to escape them (using backslashes) to ensure our shell runtime does not evaluate them as shell expressions.
 
 Let's try our attack again, but this time we will be using `JSON.parse()` to validate our input:
 
