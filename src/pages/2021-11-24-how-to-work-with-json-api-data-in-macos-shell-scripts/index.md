@@ -124,7 +124,7 @@ Let's try our attack again, but this time we will be using `JSON.parse()` to val
 ```sh{diff}
 getJsonValue() {
   # $1: JSON string to process, $2: Desired JSON key
--   osascript -l 'JavaScript' -e "($1).$2;"
+-   osascript -l 'JavaScript' -e "($1.$2);"
 +   osascript -l 'JavaScript' -e "JSON.parse(\`$1\`).$2;"
 }
 
