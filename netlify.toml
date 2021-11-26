@@ -8,7 +8,7 @@
 #     command = "npm run build"
 [build]
     command = "npm run build"
-    environment = { NODE_VERSION = "12" }
+    environment = { NODE_VERSION = "14" }
 
 # We’ll need to handle requests to any non-root paths of our app.
 # Our frontend is a single-page app and the routing is handled on the client side.
