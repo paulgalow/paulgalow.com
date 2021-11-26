@@ -105,10 +105,11 @@ I have [recorded a short video](https://www.youtube.com/watch?v=jWbexKhkEn8) for
 
 <!-- markdownlint-disable MD033 -->
 <video style="width: 100%" preload="metadata" controls muted loop>
-  <source src="../rce-exploit-demo.mp4" type="video/mp4">
+  <source src="rce-exploit-demo-1600p.mp4" type="video/mp4">
+  <source src="rce-exploit-demo-1080p.mp4" type="video/mp4">
   <!-- <source src="../rce-exploit-demo.mp4" type="video/mp4; codecs=avc1.64002a,mp4a.40.0"> -->
   <!-- <source src="../rce-exploit-demo.mp4" type="video/mp4; codecs=avc1.4D401E,mp4a.40.2"> -->
-  <p>Your browser doesn't support HTML5 video. Here is a <a href="rce-exploit-demo.mp4">link to the video</a> instead.</p>
+  <p>Your browser doesn't support HTML5 video. Here is a <a href="https://www.youtube.com/watch?v=jWbexKhkEn8">link to the video</a> instead.</p>
 </video>
 
 ### 🛡️ Remediation: Validating our JSON input
