@@ -27,12 +27,10 @@ lpass show --password "AWS IAM credentials"
 
 While browsing the [AWS CLI Command Reference](https://docs.aws.amazon.com/cli/latest/topic/config-vars.html) I came across a section about "[Sourcing Credentials From External Processes](https://docs.aws.amazon.com/cli/latest/topic/config-vars.html#sourcing-credentials-from-external-processes)" which explains how the AWS CLI can read JSON data from stdout. All we need to do is replace our set of IAM Access Key and Secret Access Key with a path to an executable which will be called by AWS CLI to get our credentials. Great!
 
-Our `~/.aws.config` file before…
+Our `~/.aws/config` file before …
 
 ```properties
 [default]
-aws_access_key_id = foo
-aws_secret_access_key = bar
 region = us-west-2
 ```
 
@@ -42,6 +40,20 @@ and after:
 [default]
 credential_process = /path/to/script
 region = us-west-2
+```
+
+Our `~/.aws/credentials` file before …
+
+```properties
+[default]
+aws_access_key_id = foo
+aws_secret_access_key = bar
+```
+
+and after:
+
+```properties
+[default]
 ```
 
 Now all we need to do is write a script that calls _lpass_ and retrieves our IAM credentials from our LastPass entry.
