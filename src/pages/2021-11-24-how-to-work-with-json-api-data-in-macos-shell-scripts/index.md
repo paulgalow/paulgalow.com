@@ -4,6 +4,10 @@ title: "How to work with JSON API data in macOS shell scripts without external d
 date: "2021-11-24"
 ---
 
+#### Update January 2022
+
+Thanks to [@RandomApps](https://twitter.com/RandomApps), I have been made aware of another potential RCE attack vector and how to mitigate it. Will update this post as soon as possible …
+
 #### tl;dr
 
 You might want to try out this shell snippet to retrieve a value from HTTP API JSON responses.
