@@ -6,7 +6,7 @@ date: "2021-11-24"
 
 #### Update January 2022
 
-Thanks to [@RandomApps](https://twitter.com/RandomApps), I have been made aware of another potential RCE attack vector and how to mitigate it. Will update this post as soon as possible …
+Thanks to @Pico on [MacAdmins Slack](https://www.macadmins.org/), I have been made aware of another potential RCE attack vector and how to mitigate it. Will update this post as soon as possible …
 
 #### tl;dr
 
