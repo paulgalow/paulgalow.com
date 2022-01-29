@@ -6,32 +6,64 @@ date: "2021-11-24"
 
 #### Update January 2022
 
-Thanks to @Pico on [MacAdmins Slack](https://www.macadmins.org/), I have been made aware of another potential RCE attack vector and how to mitigate it. Will update this post as soon as possible …
+Thanks to @Pico on [MacAdmins Slack](https://www.macadmins.org/), I have been made aware of another potential RCE attack vector and how to mitigate it. I have updated the shell snippet below and added some background.
 
 #### tl;dr
 
 You might want to try out this shell snippet to retrieve a value from HTTP API JSON responses.
 
-⚠️ Please note the use of JSON.parse() to avoid potential remote code execution:
+⚠️ To avoid potential remote code execution, we are passing our raw input value as a command-specific environment variable to JXA.
 
 ```sh
 #!/bin/sh
 
 getJsonValue() {
   # $1: JSON string to parse, $2: JSON key to look up
-  osascript -l 'JavaScript' -e "JSON.parse(\`$1\`).$2;"
+
+  # $1 is passed as a command-specific environment variable so that no special
+  # characters in valid JSON need to be escaped, and no code execution is
+  # possible since the contents cannot be interpreted as code when retrieved
+  # within JXA.
+
+  # $2 is placed directly in the JXA code since it should not be coming from
+  # user input or an arbitrary source where it could be set to intentionally
+  # malicious contents.
+
+  JSON="$1" osascript -l 'JavaScript' \
+    -e 'const app = Application.currentApplication()' \
+    -e 'app.includeStandardAdditions = true' \
+    -e "JSON.parse(app.doShellScript('printenv JSON', {alteringLineEndings: false})).$2"
 }
 
 data=$(curl -sS '<http-api-url>')
-
 myValue=$(getJsonValue "$data" "<json-key>")
+echo "$myValue"
+```
 
+Or, if you prefer a one-liner:
+
+```sh
+getJsonValue() {
+  # $1: JSON string to parse, $2: JSON key to look up
+
+  # $1 is passed as a command-specific environment variable so that no special
+  # characters in valid JSON need to be escaped, and no code execution is
+  # possible since the contents cannot be interpreted as code when retrieved
+  # within JXA.
+
+  # $2 is placed directly in the JXA code since it should not be coming from
+  # user input or an arbitrary source where it could be set to intentionally
+  # malicious contents.
+
+  JSON="$1" osascript -l 'JavaScript' -e "const app = Application.currentApplication(); app.includeStandardAdditions = true; JSON.parse(app.doShellScript('printenv JSON', {alteringLineEndings: false})).$2"
+}
+
+data=$(curl -sS '<http-api-url>')
+myValue=$(getJsonValue "$data" "<json-key>")
 echo "$myValue"
 ```
 
 ---
-
-<!-- This post was inspired by Matthew Warren's [blog post on JSON parsing without relying on third party dependencies](https://www.macblog.org/posts/how-to-parse-json-macos-command-line/). -->
 
 As we are progressing into a world of Cloud-based services connected by APIs, I'm finding more and more situations where I need to work with JSON data. One use case is using data from HTTP APIs for managing macOS clients. However, working with JSON data in shell scripts is usually cumbersome without using a third-party dependency like [jq](https://stedolan.github.io/jq/).
 
@@ -47,7 +79,7 @@ So a minimal implementation would look something like this:
 
 ```sh
 # ⚠️ Warning: This code snippet is not safe to use!
-osascript -l 'JavaScript' -e "($1.$2);"
+osascript -l 'JavaScript' -e "($1.$2)"
 ```
 
 Here, all we do is implicitly return a key's value (defined in _$2_) of whatever variable has been passed into the JavaScript execution context by our shell runtime (_$1_). We don't even need to use the _return_ keyword or JXA's special _run()_ function. JavaScript is flexible! Great. But there is a catch …
@@ -58,7 +90,7 @@ JavaScript comes with a global built-in object called _JSON_ which has a method 
 
 So why would we need to use that if we can pass in JSON strings directly into our JavaScript execution context? One answer to that is _security_.
 
-Turns out by not using _JSON.parse()_ we are enabling a potential backdoor for a remote code execution attack, because without it, any JavaScript code injected will be executed, not just JSON. Let me illustrate with a simple example:
+In fact, by not using _JSON.parse()_ we are enabling a potential backdoor for a remote code execution attack. Because without it, any JavaScript code injected will be executed, not just JSON. Let me illustrate with a simple example:
 
 Suppose we are calling an external API to get a user's full name:
 
@@ -67,7 +99,7 @@ Suppose we are calling an external API to get a user's full name:
 
 getJsonValue() {
   # $1: JSON string to process, $2: Desired JSON key
-  osascript -l 'JavaScript' -e "($1.$2);"
+  osascript -l 'JavaScript' -e "($1.$2)"
 }
 
 data=$(curl -sS https://jsonplaceholder.typicode.com/users/1)
@@ -85,7 +117,7 @@ So far, so good. Now, let's simulate a scenario in which an attacker has managed
 
 getJsonValue() {
   # $1: JSON string to process, $2: Desired JSON key
-  osascript -l 'JavaScript' -e "($1.$2);"
+  osascript -l 'JavaScript' -e "($1.$2)"
 }
 
 - json=$(curl -sS https://jsonplaceholder.typicode.com/users/1)
@@ -115,21 +147,23 @@ I have [recorded a short video](https://www.youtube.com/watch?v=jWbexKhkEn8) for
   <p>Your browser doesn't support HTML5 video. Here is a <a href="https://www.youtube.com/watch?v=jWbexKhkEn8">link to the video</a> instead.</p>
 </video>
 
-### 🛡️ Remediation: Validating our JSON input
+### 🛡️ Remediation part I: Validating our JSON input
 
-So how can we protect against this threat? That's where _JSON.parse()_ comes into play. Using it, we make sure to parse valid JSON only. If the incoming string is not JSON, this method call will throw an error.
+So how can we protect against this threat? That's where _JSON.parse()_ comes into play. Using it, we make sure to parse valid JSON only. If the incoming string is not JSON, this method call will throw an error. Still, this is not enough to protect us from all scenarios as I will discuss below.
 
-But there is more: Since the value of our first expanded shell variable `$1` will likely be a multi-line string (which is very common when working with JSON), we need to make sure we can handle those. JavaScript provides a special syntax using backticks (_`_) to create [template literals](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Template_literals). Using those, we can expand multi-line strings into our JXA execution context without it throwing an error.
+Since the value of our first expanded shell variable `$1` will likely be a multi-line string (which is very common when working with JSON), we need to make sure we can handle those. JavaScript provides a special syntax using backticks (_`_) to create [template literals](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Template_literals). Using those, we can expand multi-line strings into our JXA execution context without it throwing an error.
 
 But aren't backticks special characters in shell scripts? Indeed. So we need to escape them (using backslashes) to ensure our shell runtime does not evaluate them as shell expressions.
 
 Let's try our attack again, but this time we will be using `JSON.parse()` to validate our input:
 
 ```sh{diff}
+# ⚠️ Update January 2022: This code snippet is still not safe to use!
+
 getJsonValue() {
   # $1: JSON string to process, $2: Desired JSON key
--   osascript -l 'JavaScript' -e "($1.$2);"
-+   osascript -l 'JavaScript' -e "JSON.parse(\`$1\`).$2;"
+-   osascript -l 'JavaScript' -e "($1.$2)"
++   osascript -l 'JavaScript' -e "JSON.parse(\`$1\`).$2"
 }
 
 # json=$(curl -sS https://jsonplaceholder.typicode.com/users/1)
@@ -152,6 +186,70 @@ We have successfully thwarted the attack. Here is the error returned:
 ```sh
 execution error: Error: SyntaxError: JSON Parse error: Expected '}' (-2700)
 ```
+
+Great. But wait, there is something else lurking under the surface …
+
+### 👹 Remediation part II: Preventing unwanted shellcode execution
+
+It turns out there is yet another attack vector for potential remote code execution. The culprit? Our shell expansion expression `$1`. Since this is evaluated before our JXA code (including `JSON.parse()`), an attacker could hijack what's being executed inside JSON.parse().
+
+@Pico on [MacAdmins Slack](https://www.macadmins.org/) informed me about this situation and went to great lengths to explain what was going on. More importantly, he also came up with a brilliant solution. 🙏
+
+But first, let's explore the exploit. Suppose we have received a malicious "JSON" payload like the following one:
+
+```json
+[]`);
+app = Application.currentApplication();
+app.includeStandardAdditions = true;
+app.displayAlert("👾🔥🙈");
+(`
+```
+
+Using our JSON parsing snippet, this would evaluate to:
+
+```sh
+osascript \
+  -l JavaScript \
+  -e '
+  JSON.parse(`[]`);
+  app = Application.currentApplication();
+  app.includeStandardAdditions = true;
+  app.displayAlert("👾🔥🙈");
+  (``).value;
+  '
+```
+
+Yet again, we have a situation where our attacker could have injected malicious JXA code into our execution environment. This time, _before_ it even could reach JSON.parse(). But how to fix this? We need to hand over our shell input string to JXA somehow.
+
+#### Environment variables to the rescue
+
+Environment variables are a tried and tested method to safely hand over data from one execution environment to another. And this is exactly what we are going to use here. We could export our raw JSON input, but an even simpler and more tightly scoped solution is to use a command-specific environment variable: By prepending our _osascript_ command with the desired variable assignment, we can then safely retrieve that value from within the JXA execution context using `app.doShellScript('printenv JSON', {alteringLineEndings: false})`.
+
+Some of you JXA veterans might object: Why not use [`app.systemAttribute()`](https://developer.apple.com/library/archive/documentation/AppleScript/Conceptual/AppleScriptLangGuide/reference/ASLR_cmds.html#//apple_ref/doc/uid/TP40000983-CH216-SW45)? Isn't this API designed for retrieving environment variables? Yes, it is. But there is a problem: Multi-byte strings, more specifically UTF-8 strings, like emojis or some non-ASCII characters. Unfortunately, `app.systemAttribute()` mangles those — and I need my Germän Umlaute 🧐.
+
+So, our final solution looks like this:
+
+```sh
+#!/bin/sh
+
+getJsonValue() {
+  # $1: JSON string to parse, $2: JSON key to look up
+  JSON="$1" osascript -l 'JavaScript' \
+    -e 'const app = Application.currentApplication()' \
+    -e 'app.includeStandardAdditions = true' \
+    -e "JSON.parse(app.doShellScript('printenv JSON', {alteringLineEndings: false})).$2"
+}
+
+data=$(curl -sS '<http-api-url>')
+myValue=$(getJsonValue "$data" "<json-key>")
+echo "$myValue"
+```
+
+`$1` is passed as a command-specific environment variable so that no special characters in valid JSON need to be escaped, and no code execution is possible since the contents cannot be interpreted as code when retrieved within JXA.
+
+`$2` is placed directly in the JXA code since it should not be coming from user input or an arbitrary source where it could be set to intentionally malicious contents.
+
+This should make it impossible for any raw input to be interpreted as code.
 
 ## Working with real-world HTTP JSON responses
 
@@ -201,8 +299,11 @@ So how can we get the value for _releaseDate_? Let's have a look:
 
 ```sh
 getJsonValue() {
-  # $1: JSON string to process, $2: Desired JSON key
-  osascript -l 'JavaScript' -e "JSON.parse(\`$1\`).$2;"
+  # $1: JSON string to parse, $2: JSON key to look up
+  JSON="$1" osascript -l 'JavaScript' \
+    -e 'const app = Application.currentApplication()' \
+    -e 'app.includeStandardAdditions = true' \
+    -e "JSON.parse(app.doShellScript('printenv JSON', {alteringLineEndings: false})).$2"
 }
 
 data=$(curl -sS 'https://itunes.apple.com/search?term=steely+dan+pretzel+logic&entity=album')
@@ -218,11 +319,13 @@ Here, we are targeting the results key's first and only object entry by using [J
 Craig Hockenberry [recently wrote about](https://furbo.org/2021/08/25/jsc-my-new-best-friend/) a built-in WebKit command-line tool that is part of the native JavaScript framework used by Safari and other WebKit consumers. Let's see if we can use this tool for our purposes as well. Here's our shell function implemented using _jsc_.
 
 ```sh
+# ⚠️ Warning: This code snippet is not safe to use!
+
 getJsonValue() {
   # $1: JSON string to process, $2: Desired JSON key
   # Will return 'undefined' if key cannot be found
   /System/Library/Frameworks/JavaScriptCore.framework/Versions/Current/Helpers/jsc \
-  -e "print(JSON.parse(\`$1\`).$2);"
+  -e "print(JSON.parse(\`$1\`).$2)"
 }
 
 data=$(curl -sS 'https://itunes.apple.com/search?term=steely+dan+pretzel+logic&entity=album')
@@ -231,8 +334,12 @@ releaseDate=$(getJsonValue "$data" "results[0].releaseDate")
 echo "$releaseDate" # Returns: '1974-01-01T08:00:00Z'
 ```
 
-Turns out we can! Be aware that _jsc_ will return `undefined` if a key cannot be found.
+It turns out we can! Be aware that _jsc_ will return `undefined` if a key cannot be found.
 
-Caveat: I would hesitate to rely on this tool in production scripts since we are using a command-line tool somewhat hidden inside an Apple System Framework. Knowing Apple, APIs like that might change unexpectedly. So keep that in mind!
+⚠️ Unfortunately, this solution suffers from the same shell expansion issue mentioned earlier. And I do not know of any way to retrieve environment values from within a _jsc_ environment. Another approach would be to base64 encode our raw input string in our shell environment and decode it in _jsc_ land. Unfortunately I'm not aware of any easy built-in way to decode base64 encoded strings since Web APIs like [`btoa()`](https://developer.mozilla.org/en-US/docs/Web/API/btoa) are apparently not implemented by _jsc_.
+
+One benefit of using _jsc_ might be its limited attack surface since we are not running in a JXA environment with all its powerful scripting capabilities, but rather a browser sandbox which is usually much more rigid and secure.
+
+Also, I would hesitate to rely on this tool in production scripts since we are using a command-line tool somewhat hidden inside an Apple System Framework. Knowing Apple, APIs like that might change unexpectedly. So keep that in mind!
 
 Have I missed anything? If so, please let me know!
