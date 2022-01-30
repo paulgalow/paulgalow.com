@@ -151,7 +151,7 @@ I have [recorded a short video](https://www.youtube.com/watch?v=jWbexKhkEn8) for
 
 So how can we protect against this threat? That's where _JSON.parse()_ comes into play. Using it, we make sure to parse valid JSON only. If the incoming string is not JSON, this method call will throw an error. Still, this is not enough to protect us from all scenarios as I will discuss below.
 
-Since the value of our first expanded shell variable `$1` will likely be a multi-line string (which is very common when working with JSON), we need to make sure we can handle those. JavaScript provides a special syntax using backticks (_`_) to create [template literals](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Template_literals). Using those, we can expand multi-line strings into our JXA execution context without it throwing an error.
+Since the value of our first expanded shell variable `$1` will likely be a multiline string (which is very common when working with JSON), we need to make sure we can handle those. JavaScript provides a special syntax using backticks (_`_) to create [template literals](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Template_literals). Using those, we can expand multiline strings into our JXA execution context without it throwing an error.
 
 But aren't backticks special characters in shell scripts? Indeed. So we need to escape them (using backslashes) to ensure our shell runtime does not evaluate them as shell expressions.
 
@@ -229,7 +229,9 @@ Some of you JXA veterans might object:
 
 > "Why not use [`app.systemAttribute()`](https://developer.apple.com/library/archive/documentation/AppleScript/Conceptual/AppleScriptLangGuide/reference/ASLR_cmds.html#//apple_ref/doc/uid/TP40000983-CH216-SW45)? Isn't this API designed for retrieving environment variables?"
 
-Yes, it is. But there is a problem: Multi-byte strings, more specifically UTF-8 strings, like emojis or some non-ASCII characters. Unfortunately, `app.systemAttribute()` mangles those — and I need my Germän Umlaute 🧐.
+Yes, it is. But there is a problem: Multibyte strings, more specifically UTF-8 strings, like emojis or some non-ASCII characters. Unfortunately, `app.systemAttribute()` mangles those — and I need my Germän Umlaute 🧐.
+
+If we wanted to exactly match the behavior of `app.systemAttribute()` while preserving UTF-8 multibyte strings, we could also use JavaScript's `replace()` method to remove any trailing line break: `app.doShellScript('printenv JSON', {alteringLineEndings: false}).replace(/\n$/, '')`.
 
 So, our final solution looks like this:
 
