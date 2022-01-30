@@ -22,7 +22,7 @@ Wordpress2016.overrideThemeStyles = () => ({
     letterSpacing: "-0.5px",
     padding: "4.5px 6px",
   },
-  "h2,h3": {
+  "h2,h3,h4,h5,h6": {
     lineHeight: "1.5",
   },
 });
