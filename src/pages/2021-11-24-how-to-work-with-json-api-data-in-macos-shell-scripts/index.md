@@ -231,7 +231,7 @@ Some of you JXA veterans might object:
 
 Yes, it is. But there is a problem: Multibyte strings, more specifically UTF-8 strings, like emojis or some non-ASCII characters. Unfortunately, `app.systemAttribute()` mangles those — and I need my Germän Umlaute 🧐.
 
-If we wanted to exactly match the behavior of `app.systemAttribute()` while preserving UTF-8 multibyte strings, we could also use JavaScript's `replace()` method to remove any trailing line break: `app.doShellScript('printenv JSON', {alteringLineEndings: false}).replace(/\n$/, '')`.
+If we wanted to exactly match the behavior of `app.systemAttribute()` while preserving UTF-8 multibyte strings, we could also use JavaScript's [`replace()`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String/replace) method to remove any trailing line break: `app.doShellScript('printenv JSON', {alteringLineEndings: false}).replace(/\n$/, '')`.
 
 So, our final solution looks like this:
 
