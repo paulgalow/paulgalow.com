@@ -36,7 +36,7 @@ getJsonValue() {
 }
 
 data=$(curl -sS '<http-api-url>')
-myValue=$(getJsonValue "$data" "<json-key>")
+myValue=$(getJsonValue "$data" '<json-key>')
 echo "$myValue"
 ```
 
@@ -59,7 +59,7 @@ getJsonValue() {
 }
 
 data=$(curl -sS '<http-api-url>')
-myValue=$(getJsonValue "$data" "<json-key>")
+myValue=$(getJsonValue "$data" '<json-key>')
 echo "$myValue"
 ```
 
@@ -102,8 +102,8 @@ getJsonValue() {
   osascript -l 'JavaScript' -e "($1.$2)"
 }
 
-data=$(curl -sS https://jsonplaceholder.typicode.com/users/1)
-fullName=$(getJsonValue "$data" name)
+data=$(curl -sS 'https://jsonplaceholder.typicode.com/users/1')
+fullName=$(getJsonValue "$data" 'name')
 
 echo "$fullName" # Returns: 'Leanne Graham'
 ```
@@ -120,7 +120,7 @@ getJsonValue() {
   osascript -l 'JavaScript' -e "($1.$2)"
 }
 
-- json=$(curl -sS https://jsonplaceholder.typicode.com/users/1)
+- json=$(curl -sS 'https://jsonplaceholder.typicode.com/users/1')
 
 # String sent by a rogue HTTP endpoint
 + json='{
@@ -131,7 +131,7 @@ getJsonValue() {
 +  }
 +}'
 
-fullName=$(getJsonValue "$json" name)
+fullName=$(getJsonValue "$json" 'name')
 echo "$fullName" # Custom JavaScript code is being executed instead 👾
 ```
 
@@ -166,7 +166,7 @@ getJsonValue() {
 +   osascript -l 'JavaScript' -e "JSON.parse(\`$1\`).$2"
 }
 
-# json=$(curl -sS https://jsonplaceholder.typicode.com/users/1)
+# json=$(curl -sS 'https://jsonplaceholder.typicode.com/users/1')
 
 # String sent by a rogue API endpoint
 json='{
@@ -177,7 +177,7 @@ json='{
   }
 }'
 
-fullName=$(getJsonValue "$json" name)
+fullName=$(getJsonValue "$json" 'name')
 echo "$fullName" # Returns a JSON Parse error
 ```
 
@@ -246,7 +246,7 @@ getJsonValue() {
 }
 
 data=$(curl -sS '<http-api-url>')
-myValue=$(getJsonValue "$data" "<json-key>")
+myValue=$(getJsonValue "$data" '<json-key>')
 echo "$myValue"
 ```
 
@@ -335,7 +335,7 @@ getJsonValue() {
 
 data=$(curl -sS 'https://itunes.apple.com/search?term=steely+dan+pretzel+logic&entity=album')
 
-releaseDate=$(getJsonValue "$data" "results[0].releaseDate")
+releaseDate=$(getJsonValue "$data" 'results[0].releaseDate')
 echo "$releaseDate" # Returns: '1974-01-01T08:00:00Z'
 ```
 
