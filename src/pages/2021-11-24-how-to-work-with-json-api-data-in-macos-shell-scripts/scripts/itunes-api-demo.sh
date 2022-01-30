@@ -9,5 +9,5 @@ getJsonValue() {
 }
 
 data=$(curl -sS 'https://itunes.apple.com/search?term=steely+dan+pretzel+logic&entity=album')
-releaseDate=$(getJsonValue "$data" "results[0].releaseDate")
+releaseDate=$(getJsonValue "$data" 'results[0].releaseDate')
 echo "$releaseDate" # Returns: '1974-01-01T08:00:00Z'
