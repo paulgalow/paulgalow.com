@@ -1,0 +1,1 @@
+[]`); app = Application.currentApplication(); app.includeStandardAdditions = true; app.displayAlert("👾🔥🙈"); JSON.parse(`[]
