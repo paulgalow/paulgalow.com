@@ -223,21 +223,26 @@ Yet again, we have a situation where our attacker could have injected malicious 
 
 #### Environment variables to the rescue
 
-Environment variables are a tried and tested method to safely hand over data from one execution environment to another. And this is exactly what we are going to use here. We could export our raw JSON input, but an even simpler and more tightly scoped solution is to use a command-specific environment variable: By prepending our _osascript_ command with the desired variable assignment, we can then safely retrieve that value from within the JXA execution context using `app.doShellScript('printenv JSON', {alteringLineEndings: false})`.
+Environment variables are a tried and tested method to safely hand over data from one execution environment to another. And this is exactly what we are going to use here. We could export our raw JSON input, but an even simpler and more tightly scoped solution is to use a command-specific environment variable: By prepending our _osascript_ command with the desired variable assignment, we can safely retrieve that value from within the JXA execution context using `app.doShellScript('printenv JSON', {alteringLineEndings: false})`. We are changing the [`alteringLineEndings`](https://developer.apple.com/library/archive/documentation/AppleScript/Conceptual/AppleScriptLangGuide/reference/ASLR_cmds.html#//apple_ref/doc/uid/TP40000983-CH216-SW40) parameter from its default value (`true`) to `false` to make sure JXA doesn't change any line breaks. By default, it converts `\n` line breaks to `\r` and trims any trailing line break. This does not matter for JSON parsing, but there might be a use case where we would like to preserve existing `\n` line breaks.
 
-Some of you JXA veterans might object: Why not use [`app.systemAttribute()`](https://developer.apple.com/library/archive/documentation/AppleScript/Conceptual/AppleScriptLangGuide/reference/ASLR_cmds.html#//apple_ref/doc/uid/TP40000983-CH216-SW45)? Isn't this API designed for retrieving environment variables? Yes, it is. But there is a problem: Multi-byte strings, more specifically UTF-8 strings, like emojis or some non-ASCII characters. Unfortunately, `app.systemAttribute()` mangles those — and I need my Germän Umlaute 🧐.
+Some of you JXA veterans might object:
+
+> "Why not use [`app.systemAttribute()`](https://developer.apple.com/library/archive/documentation/AppleScript/Conceptual/AppleScriptLangGuide/reference/ASLR_cmds.html#//apple_ref/doc/uid/TP40000983-CH216-SW45)? Isn't this API designed for retrieving environment variables?"
+
+Yes, it is. But there is a problem: Multi-byte strings, more specifically UTF-8 strings, like emojis or some non-ASCII characters. Unfortunately, `app.systemAttribute()` mangles those — and I need my Germän Umlaute 🧐.
 
 So, our final solution looks like this:
 
-```sh
+```sh{diff}
 #!/bin/sh
 
 getJsonValue() {
   # $1: JSON string to parse, $2: JSON key to look up
-  JSON="$1" osascript -l 'JavaScript' \
-    -e 'const app = Application.currentApplication()' \
-    -e 'app.includeStandardAdditions = true' \
-    -e "JSON.parse(app.doShellScript('printenv JSON', {alteringLineEndings: false})).$2"
+-   osascript -l 'JavaScript' -e "JSON.parse(\`$1\`).$2"
++   JSON="$1" osascript -l 'JavaScript' \
++     -e 'const app = Application.currentApplication()' \
++     -e 'app.includeStandardAdditions = true' \
++     -e "JSON.parse(app.doShellScript('printenv JSON', {alteringLineEndings: false})).$2"
 }
 
 data=$(curl -sS '<http-api-url>')
@@ -336,9 +341,9 @@ echo "$releaseDate" # Returns: '1974-01-01T08:00:00Z'
 
 It turns out we can! Be aware that _jsc_ will return `undefined` if a key cannot be found.
 
-⚠️ Unfortunately, this solution suffers from the same shell expansion issue mentioned earlier. And I do not know of any way to retrieve environment values from within a _jsc_ environment. Another approach would be to base64 encode our raw input string in our shell environment and decode it in _jsc_ land. Unfortunately I'm not aware of any easy built-in way to decode base64 encoded strings since Web APIs like [`btoa()`](https://developer.mozilla.org/en-US/docs/Web/API/btoa) are apparently not implemented by _jsc_.
+⚠️ Unfortunately, this solution suffers from the same shell expansion issue mentioned earlier. And I do not know of any way to retrieve environment values from within a _jsc_ environment. Another approach would be to base64 encode our raw input string in our shell environment and decode it in _jsc_ land. Unfortunately I'm not aware of any easy built-in way to decode base64 encoded strings since Web APIs like [`atob()`](https://developer.mozilla.org/en-US/docs/Web/API/atob) are apparently not implemented by _jsc_.
 
-One benefit of using _jsc_ might be its limited attack surface since we are not running in a JXA environment with all its powerful scripting capabilities, but rather a browser sandbox which is usually much more rigid and secure.
+One benefit of using _jsc_ might be its limited attack surface: we are not running in a JXA environment with all its powerful scripting capabilities, but rather in a browser sandbox which is much more restrictive and isolated.
 
 Also, I would hesitate to rely on this tool in production scripts since we are using a command-line tool somewhat hidden inside an Apple System Framework. Knowing Apple, APIs like that might change unexpectedly. So keep that in mind!
 
