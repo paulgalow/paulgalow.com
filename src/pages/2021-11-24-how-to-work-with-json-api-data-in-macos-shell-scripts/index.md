@@ -191,7 +191,7 @@ osascript \
   app = Application.currentApplication();
   app.includeStandardAdditions = true;
   app.displayAlert("👾🔥🙈");
-  (``).value;
+  (``).name;
   '
 ```
 
