@@ -1,0 +1,2 @@
+# Ignore all Markdown blog posts:
+src/pages/**/*.md
