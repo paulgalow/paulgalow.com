@@ -204,7 +204,7 @@ Environment variables are a tried and tested method to safely hand over data fro
 By prepending our `osascript` command with the desired variable assignment, we can then safely retrieve that value from within the JXA execution context using Objective-C:
 
 ```js
-const env = $.NSProcessInfo.processInfo.environment.objectForKey("JSON").js;
+const env = $.NSProcessInfo.processInfo.environment.objectForKey("JSON").js
 ```
 
 Here, we are using Foundation's [`NSProcessInfo`](https://developer.apple.com/documentation/foundation/nsprocessinfo) class to retrieve our environment variable. JXA automatically imports _Foundation_, so we can directly access it using the global `$` object. There is no need to wrap our environment variable string as `NSString` before passing it to `NSProcessInfo`. According to [Apple's documentation](https://developer.apple.com/library/archive/releasenotes/InterapplicationCommunication/RN-JavaScriptForAutomation/Articles/OSX10-10.html#//apple_ref/doc/uid/TP40014508-CH109-SW19):
