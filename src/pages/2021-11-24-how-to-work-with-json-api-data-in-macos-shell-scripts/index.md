@@ -30,32 +30,8 @@ getJsonValue() {
   # malicious contents.
 
   JSON="$1" osascript -l 'JavaScript' \
-    -e 'const app = Application.currentApplication()' \
-    -e 'app.includeStandardAdditions = true' \
-    -e "JSON.parse(app.doShellScript('printenv JSON', {alteringLineEndings: false})).$2"
-}
-
-data=$(curl -sS '<http-api-url>')
-myValue=$(getJsonValue "$data" '<json-key>')
-echo "$myValue"
-```
-
-Or, if you prefer a one-liner:
-
-```sh
-getJsonValue() {
-  # $1: JSON string to parse, $2: JSON key to look up
-
-  # $1 is passed as a command-specific environment variable so that no special
-  # characters in valid JSON need to be escaped, and no code execution is
-  # possible since the contents cannot be interpreted as code when retrieved
-  # within JXA.
-
-  # $2 is placed directly in the JXA code since it should not be coming from
-  # user input or an arbitrary source where it could be set to intentionally
-  # malicious contents.
-
-  JSON="$1" osascript -l 'JavaScript' -e "const app = Application.currentApplication(); app.includeStandardAdditions = true; JSON.parse(app.doShellScript('printenv JSON', {alteringLineEndings: false})).$2"
+    -e 'const env = $.NSProcessInfo.processInfo.environment.objectForKey("JSON").js' \
+    -e "JSON.parse(env).$2"
 }
 
 data=$(curl -sS '<http-api-url>')
@@ -82,15 +58,15 @@ So a minimal implementation would look something like this:
 osascript -l 'JavaScript' -e "($1.$2)"
 ```
 
-Here, all we do is implicitly return a key's value (defined in _$2_) of whatever variable has been passed into the JavaScript execution context by our shell runtime (_$1_). We don't even need to use the _return_ keyword or JXA's special _run()_ function. JavaScript is flexible! Great. But there is a catch …
+Here, all we are doing is implicitly returning a key's value (defined in `$2`) of whatever variable has been passed into the JavaScript execution context by our shell runtime (`$1`). We don't even need to use the `return` keyword or JXA's special `run()` function. JavaScript is flexible! Great. But there is a catch …
 
 ## 👾 Remote code execution vulnerability
 
-JavaScript comes with a global built-in object called _JSON_ which has a method called [_JSON.parse()_](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/JSON/parse) that is designed to parse JSON strings.
+JavaScript comes with a global built-in object named _JSON_ which has a method called [`JSON.parse()`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/JSON/parse) that is designed to parse JSON strings.
 
 So why would we need to use that if we can pass in JSON strings directly into our JavaScript execution context? One answer to that is _security_.
 
-In fact, by not using _JSON.parse()_ we are enabling a potential backdoor for a remote code execution attack. Because without it, any JavaScript code injected will be executed, not just JSON. Let me illustrate with a simple example:
+In fact, by not using `JSON.parse()` we are enabling a potential backdoor for a remote code execution attack. Because without it, any JavaScript code injected will be executed, not just JSON. Let me illustrate with a simple example:
 
 Suppose we are calling an external API to get a user's full name:
 
@@ -149,7 +125,7 @@ I have [recorded a short video](https://www.youtube.com/watch?v=jWbexKhkEn8) for
 
 ### 🛡️ Remediation part I: Validating our JSON input
 
-So how can we protect against this threat? That's where _JSON.parse()_ comes into play. Using it, we make sure to parse valid JSON only. If the incoming string is not JSON, this method call will throw an error. Still, this is not enough to protect us from all scenarios as I will discuss below.
+So how can we protect against this threat? That's where `JSON.parse()` comes into play. Using it, we make sure to parse valid JSON only. If the incoming string is not JSON, this method call will throw an error. Still, this is not enough to protect us from all scenarios as I will discuss below.
 
 Since the value of our first expanded shell variable `$1` will likely be a multiline string (which is very common when working with JSON), we need to make sure we can handle those. JavaScript provides a special syntax using backticks (_`_) to create [template literals](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Template_literals). Using those, we can expand multiline strings into our JXA execution context without it throwing an error.
 
@@ -223,15 +199,23 @@ Yet again, we have a situation where our attacker could have injected malicious 
 
 #### Environment variables to the rescue
 
-Environment variables are a tried and tested method to safely hand over data from one execution environment to another. And this is exactly what we are going to use here. We could export our raw JSON input, but an even simpler and more tightly scoped solution is to use a command-specific environment variable: By prepending our _osascript_ command with the desired variable assignment, we can safely retrieve that value from within the JXA execution context using `app.doShellScript('printenv JSON', {alteringLineEndings: false})`. We are changing the [`alteringLineEndings`](https://developer.apple.com/library/archive/documentation/AppleScript/Conceptual/AppleScriptLangGuide/reference/ASLR_cmds.html#//apple_ref/doc/uid/TP40000983-CH216-SW40) parameter from its default value (`true`) to `false` to make sure JXA doesn't change any line breaks. By default, it converts `\n` line breaks to `\r` and trims any trailing line break. This does not matter for JSON parsing, but there might be a use case where we would like to preserve existing `\n` line breaks.
+Environment variables are a tried and tested method to safely hand over data from one execution environment to another. And this is exactly what we are going to use here. We could export our raw JSON input, but an even simpler and more tightly scoped solution is to use a command-specific environment variable.
+
+By prepending our `osascript` command with the desired variable assignment, we can then safely retrieve that value from within the JXA execution context using Objective-C:
+
+```js
+const env = $.NSProcessInfo.processInfo.environment.objectForKey("JSON").js;
+```
+
+Here, we are using Foundation's [`NSProcessInfo`](https://developer.apple.com/documentation/foundation/nsprocessinfo) class to retrieve our environment variable. JXA automatically imports _Foundation_, so we can directly access it using the global `$` object. There is no need to wrap our environment variable string into an NSString before passing it to `NSProcessInfo`. According to [Apple's documentation](https://developer.apple.com/library/archive/releasenotes/InterapplicationCommunication/RN-JavaScriptForAutomation/Articles/OSX10-10.html#//apple_ref/doc/uid/TP40014508-CH109-SW19).
+
+> Primitive JavaScript data types will be automatically converted to ObjC object types when passed as an argument to an ObjC method that is expecting an object type.
 
 Some of you JXA veterans might object:
 
 > "Why not use [`app.systemAttribute()`](https://developer.apple.com/library/archive/documentation/AppleScript/Conceptual/AppleScriptLangGuide/reference/ASLR_cmds.html#//apple_ref/doc/uid/TP40000983-CH216-SW45)? Isn't this API designed for retrieving environment variables?"
 
 Yes, it is. But there is a problem: Multibyte strings, more specifically UTF-8 strings, like emojis or some non-ASCII characters. Unfortunately, `app.systemAttribute()` mangles those — and I need my Germän Umlaute 🧐.
-
-If we wanted to exactly match the behavior of `app.systemAttribute()` while preserving UTF-8 multibyte strings, we could also use JavaScript's [`replace()`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String/replace) method to remove any trailing line break: `app.doShellScript('printenv JSON', {alteringLineEndings: false}).replace(/\n$/, '')`.
 
 So, our final solution looks like this:
 
@@ -242,9 +226,8 @@ getJsonValue() {
   # $1: JSON string to parse, $2: JSON key to look up
 -   osascript -l 'JavaScript' -e "JSON.parse(\`$1\`).$2"
 +   JSON="$1" osascript -l 'JavaScript' \
-+     -e 'const app = Application.currentApplication()' \
-+     -e 'app.includeStandardAdditions = true' \
-+     -e "JSON.parse(app.doShellScript('printenv JSON', {alteringLineEndings: false})).$2"
++     -e 'const env = $.NSProcessInfo.processInfo.environment.objectForKey("JSON").js' \
++     -e "JSON.parse(env).$2"
 }
 
 data=$(curl -sS '<http-api-url>')
@@ -308,9 +291,8 @@ So how can we get the value for _releaseDate_? Let's have a look:
 getJsonValue() {
   # $1: JSON string to parse, $2: JSON key to look up
   JSON="$1" osascript -l 'JavaScript' \
-    -e 'const app = Application.currentApplication()' \
-    -e 'app.includeStandardAdditions = true' \
-    -e "JSON.parse(app.doShellScript('printenv JSON', {alteringLineEndings: false})).$2"
+    -e 'const env = $.NSProcessInfo.processInfo.environment.objectForKey("JSON").js' \
+    -e "JSON.parse(env).$2"
 }
 
 data=$(curl -sS 'https://itunes.apple.com/search?term=steely+dan+pretzel+logic&entity=album')
@@ -343,7 +325,7 @@ echo "$releaseDate" # Returns: '1974-01-01T08:00:00Z'
 
 It turns out we can! Be aware that _jsc_ will return `undefined` if a key cannot be found.
 
-⚠️ Unfortunately, this solution suffers from the same shell expansion issue mentioned earlier. And I do not know of any way to retrieve environment values from within a _jsc_ environment. Another approach would be to base64 encode our raw input string in our shell environment and decode it in _jsc_ land. Unfortunately I'm not aware of any easy built-in way to decode base64 encoded strings since Web APIs like [`atob()`](https://developer.mozilla.org/en-US/docs/Web/API/atob) are apparently not implemented by _jsc_.
+⚠️ Unfortunately, this solution suffers from the same shell expansion issue mentioned earlier. And I do not know of any way to retrieve environment values from within a _jsc_ environment. Another approach would be to Base64 encode our raw input string in our shell environment and decode it in _jsc_ land. Unfortunately I'm not aware of any easy built-in way to decode Base64 encoded strings since Web APIs like [`atob()`](https://developer.mozilla.org/en-US/docs/Web/API/atob) are apparently not implemented by _jsc_.
 
 One benefit of using _jsc_ might be its limited attack surface: we are not running in a JXA environment with all its powerful scripting capabilities, but rather in a browser sandbox which is much more restrictive and isolated.
 

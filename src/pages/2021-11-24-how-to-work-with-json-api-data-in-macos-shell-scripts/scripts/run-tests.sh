@@ -36,17 +36,30 @@
 # OSASCRIPT_JXA_EOF
 # }
 
+# getJsonValue() {
+#   # $1: JSON string to parse, $2: JSON key to look up
+#   JSON="$1" osascript -l 'JavaScript' \
+#     -e "const app = Application.currentApplication();" \
+#     -e "app.includeStandardAdditions = true;" \
+#     -e "JSON.parse(app.doShellScript('printenv JSON', {alteringLineEndings: false})).$2"
+# }
+
+# getJsonValue() {
+#   # $1: JSON string to parse, $2: JSON key to look up
+#   JSON="$1" osascript -l 'JavaScript' \
+#     -e "JSON.parse($.NSProcessInfo.processInfo.environment.objectForKey('JSON').js).$2"
+# }
+
 getJsonValue() {
   # $1: JSON string to parse, $2: JSON key to look up
   JSON="$1" osascript -l 'JavaScript' \
-    -e "const app = Application.currentApplication();" \
-    -e "app.includeStandardAdditions = true;" \
-    -e "JSON.parse(app.doShellScript('printenv JSON', {alteringLineEndings: false})).$2"
+    -e 'const env = $.NSProcessInfo.processInfo.environment.objectForKey("JSON").js' \
+    -e "JSON.parse(env).$2"
 }
 
 runTests() {
   for test in tests/*.json; do
-    getJsonValue "$(cat "$test")" "value"
+    getJsonValue "$(cat "$test")" 'value'
   done
 }
 
