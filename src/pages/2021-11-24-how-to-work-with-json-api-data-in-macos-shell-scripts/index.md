@@ -167,7 +167,7 @@ Great. But wait, there is something else lurking under the surface …
 
 ### 👹 Remediation part II: Preventing unwanted shellcode execution
 
-It turns out there is yet another attack vector for potential remote code execution. The culprit? Our shell expansion expression `$1`. Since this is evaluated before our JXA code (including `JSON.parse()`), an attacker could hijack what's being executed inside JSON.parse().
+It turns out there is yet another attack vector for potential remote code execution. The culprit? Our shell expansion expression `$1`. Since this is evaluated before our JXA code (including `JSON.parse()`), an attacker could hijack what's being executed inside `JSON.parse()`.
 
 @Pico on [MacAdmins Slack](https://www.macadmins.org/) informed me about this situation and went to great lengths to explain what was going on. More importantly, he also came up with a brilliant solution. 🙏
 
@@ -195,7 +195,7 @@ osascript \
   '
 ```
 
-Yet again, we have a situation where our attacker could have injected malicious JXA code into our execution environment. This time, _before_ it even could reach JSON.parse(). But how to fix this? We need to hand over our shell input string to JXA somehow.
+Yet again, we have a situation where our attacker could have injected malicious JXA code into our execution environment. This time, _before_ it even could reach `JSON.parse()`. But how to fix this? We need to hand over our shell input string to JXA somehow.
 
 #### Environment variables to the rescue
 
