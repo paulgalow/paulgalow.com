@@ -4,6 +4,8 @@ title: "AWS Route 53 least privilege IAM policy for Let's Encrypt DNS challenge"
 date: "2022-10-05"
 ---
 
+![A person entering a gate to a huge castle in the cloud](./illustration-dalle2.png)
+
 If you are using AWS Route 53 as your DNS provider, you might have been surprised after consulting the service's documentation for IAM permissions.
 
 Until recently, IAM permissions for DNS entries could not be tied down further than to the level of a hosted zone. An overly broad set of permissions was required, even if you only wanted to make a small change, like adding or deleting a TXT record.
@@ -48,33 +50,24 @@ Here is an example policy for [acme.sh](https://github.com/acmesh-official/acme.
   "Statement": [
     {
       "Effect": "Allow",
-      "Action": [
-        "route53:ListHostedZones"
-      ],
+      "Action": ["route53:ListHostedZones"],
       "Resource": "*"
     },
     {
       "Effect": "Allow",
-      "Action": [
-        "route53:GetHostedZone",
-        "route53:ListResourceRecordSets"
-      ],
+      "Action": ["route53:GetHostedZone", "route53:ListResourceRecordSets"],
       "Resource": "arn:aws:route53:::hostedzone/Z11111112222222333333"
     },
     {
       "Effect": "Allow",
-      "Action": [
-        "route53:ChangeResourceRecordSets"
-      ],
+      "Action": ["route53:ChangeResourceRecordSets"],
       "Resource": "arn:aws:route53:::hostedzone/Z11111112222222333333",
       "Condition": {
         "ForAllValues:StringEquals": {
           "route53:ChangeResourceRecordSetsNormalizedRecordNames": [
             "_acme-challenge.example.com"
           ],
-          "route53:ChangeResourceRecordSetsRecordTypes": [
-            "TXT"
-          ]
+          "route53:ChangeResourceRecordSetsRecordTypes": ["TXT"]
         }
       }
     }
@@ -102,29 +95,19 @@ And here is an example for using Traefik with its [Route 53 dnsChallenge provide
     },
     {
       "Effect": "Allow",
-      "Action": [
-        "route53:ListResourceRecordSets"
-      ],
-      "Resource": [
-        "arn:aws:route53:::hostedzone/Z11111112222222333333"
-      ]
+      "Action": ["route53:ListResourceRecordSets"],
+      "Resource": ["arn:aws:route53:::hostedzone/Z11111112222222333333"]
     },
     {
       "Effect": "Allow",
-      "Action": [
-        "route53:ChangeResourceRecordSets"
-      ],
-      "Resource": [
-        "arn:aws:route53:::hostedzone/Z11111112222222333333"
-      ],
+      "Action": ["route53:ChangeResourceRecordSets"],
+      "Resource": ["arn:aws:route53:::hostedzone/Z11111112222222333333"],
       "Condition": {
         "ForAllValues:StringEquals": {
           "route53:ChangeResourceRecordSetsNormalizedRecordNames": [
             "_acme-challenge.example.com"
           ],
-          "route53:ChangeResourceRecordSetsRecordTypes": [
-            "TXT"
-          ]
+          "route53:ChangeResourceRecordSetsRecordTypes": ["TXT"]
         }
       }
     }
@@ -149,10 +132,7 @@ Here is an example that denies all access if a request does not originate from e
       "Resource": "*",
       "Condition": {
         "NotIpAddress": {
-          "aws:SourceIp": [
-            "20.20.20.20/32",
-            "30.30.30.30/32"
-          ]
+          "aws:SourceIp": ["20.20.20.20/32", "30.30.30.30/32"]
         },
         "BoolIfExists": {
           "aws:PrincipalIsAWSService": "false",
