@@ -4,7 +4,7 @@ title: "AWS Route 53 least privilege IAM policy for Let's Encrypt DNS challenge"
 date: "2022-10-05"
 ---
 
-![A person entering a gate to a huge castle in the cloud](./illustration-dalle2.png)
+![A person entering a gate to a huge castle in the clouds](./illustration-dalle2.png)
 
 If you are using AWS Route 53 as your DNS provider, you might have been surprised after consulting the service's documentation for IAM permissions.
 
@@ -12,7 +12,7 @@ Until recently, IAM permissions for DNS entries could not be tied down further t
 
 This became quite apparent when using non-public-facing tools like reverse proxies. For example, I have been using [Traefik](https://traefik.io/) to facilitate access to internal services. The easiest way for me to automate TLS certificate management was using wildcard certificates. This and the fact that the service is not exposed to the Internet is a perfect use case for [Let's Encrypt's DNS challenge](https://letsencrypt.org/docs/challenge-types/#dns-01-challenge). No need to open any ports. Everything is handled at the DNS level. Not to mention, this is the only challenge type for LE wildcard certificates anyway. Perfect. But I always had a bad feeling about provisioning those overly broad AWS permissions. What if the reverse proxy gets compromised? An attacker would be able to take over all of my domain's records.
 
-Fortunately, [AWS just released an update](https://aws.amazon.com/about-aws/whats-new/2022/09/amazon-route-53-support-dns-resource-record-set-permissions/) that lets us now use additional IAM permission conditions to create a very tightly scoped IAM policy with least privilege access. Let me show you how …
+Fortunately, [AWS just released an update](https://aws.amazon.com/about-aws/whats-new/2022/09/amazon-route-53-support-dns-resource-record-set-permissions/) that lets us now use additional IAM permission conditions to create a very tightly scoped IAM policy with least privilege access. Let me show you how:
 
 The main change is in the `route53:ChangeResourceRecordSets` API call. We can add a list of allowed record names and their types ([among other options](https://docs.aws.amazon.com/Route53/latest/DeveloperGuide/specifying-rrset-conditions.html)). So how do we limit this API call to Let's Encrypt? All Let's Encrypt does is add (and remove) a DNS TXT entry with the key of `_acme-challenge.<your-domain-name.tld>`.
 
@@ -21,18 +21,14 @@ Here is an example of the specific IAM policy action. Replace `Z1111111222222233
 ```json{diff}
 {
   "Effect": "Allow",
-  "Action": [
-    "route53:ChangeResourceRecordSets"
-  ],
+  "Action": ["route53:ChangeResourceRecordSets"],
   "Resource": "arn:aws:route53:::hostedzone/Z11111112222222333333",
 +   "Condition": {
 +     "ForAllValues:StringEquals": {
 +       "route53:ChangeResourceRecordSetsNormalizedRecordNames": [
 +         "_acme-challenge.example.com"
 +       ],
-+       "route53:ChangeResourceRecordSetsRecordTypes": [
-+         "TXT"
-+       ]
++       "route53:ChangeResourceRecordSetsRecordTypes": ["TXT"]
 +     }
 +   }
 }
