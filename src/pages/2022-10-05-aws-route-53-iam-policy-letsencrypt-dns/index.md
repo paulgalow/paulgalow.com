@@ -113,7 +113,7 @@ And here is an example for using Traefik with its [Route 53 dnsChallenge provide
 
 ## Bonus: Lock down your policies even further by using fixed IP addresses
 
-If you using this for internal networks and have a static IP address assigned to your WAN connection you can use that contextual information to deny any AWS API calls not originating from that IP address. I have created a managed policy that I can easily add to an IAM entity like a user, group, or role. IAM will aggregate all policies attached to an IAM entity and evaluate them in total.
+If you are using this for internal networks and have a static IP address assigned to your WAN connection you can use that contextual information to deny any AWS API calls not originating from that IP address. I have created a managed policy that I can easily add to an IAM entity like a user, group, or role. IAM will aggregate all policies attached to an IAM entity and evaluate them in total.
 
 Here is an example that denies all access if a request does not originate from either one of our specified IP addresses `20.20.20.20` or `30.30.30.30`:
 
