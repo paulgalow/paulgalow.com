@@ -50,11 +50,18 @@
 #     -e "JSON.parse($.NSProcessInfo.processInfo.environment.objectForKey('JSON').js).$2"
 # }
 
+# getJsonValue() {
+#   # $1: JSON string to parse, $2: JSON key to look up
+#   JSON="$1" osascript -l 'JavaScript' \
+#     -e 'const env = $.NSProcessInfo.processInfo.environment.objectForKey("JSON").js' \
+#     -e "JSON.parse(env).$2"
+# }
+
 getJsonValue() {
-  # $1: JSON string to parse, $2: JSON key to look up
-  JSON="$1" osascript -l 'JavaScript' \
-    -e 'const env = $.NSProcessInfo.processInfo.environment.objectForKey("JSON").js' \
-    -e "JSON.parse(env).$2"
+  osascript -l 'JavaScript' - "$1" "$2" << 'EOF'
+    function run(argv) {
+      return JSON.parse(argv[0])[argv[1]] }
+EOF
 }
 
 runTests() {

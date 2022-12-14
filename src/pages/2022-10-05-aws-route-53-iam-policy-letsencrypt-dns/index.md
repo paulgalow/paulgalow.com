@@ -38,9 +38,12 @@ Unfortunately, the complete IAM policy required varies from case to case since d
 
 ## Example policy: acme.sh (used by OPNsense ACME Client plugin)
 
-Here is an example policy for [acme.sh](https://github.com/acmesh-official/acme.sh) that I have been using with the OPNsense ACME Client (using the os-acme-client plugin).
+Here is an example policy for [acme.sh](https://github.com/acmesh-official/acme.sh) that I have been using with the OPNsense ACME Client (using the os-acme-client plugin). In this case, I wanted to issue certificates for single domains and wildcard certificates at the same time. I achieved this by changing two parts of the policy:
 
-```json
+1. Swapping the `ForAllValues:StringEquals` condition with `ForAllValues:StringLike`
+2. Changing the allowed record name from a specific domain to including a wildcard `*` character
+
+```json{diff}
 {
   "Version": "2012-10-17",
   "Statement": [
@@ -59,9 +62,11 @@ Here is an example policy for [acme.sh](https://github.com/acmesh-official/acme.
       "Action": ["route53:ChangeResourceRecordSets"],
       "Resource": "arn:aws:route53:::hostedzone/Z11111112222222333333",
       "Condition": {
-        "ForAllValues:StringEquals": {
+-         "ForAllValues:StringEquals": {
++         "ForAllValues:StringLike": {
           "route53:ChangeResourceRecordSetsNormalizedRecordNames": [
-            "_acme-challenge.example.com"
+-             "_acme-challenge.example.com"
++             "_acme-challenge.*example.com"
           ],
           "route53:ChangeResourceRecordSetsRecordTypes": ["TXT"]
         }
@@ -141,3 +146,5 @@ Here is an example that denies all access if a request does not originate from e
 ```
 
 The `BoolIfExists` condition is optional but useful to make sure AWS services (like KMS) can still use this policy on your behalf.
+
+Updated December 2022.
