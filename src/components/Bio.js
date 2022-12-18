@@ -1,25 +1,25 @@
-import React from 'react'
+import React from "react";
 
 // Import typefaces
-import 'typeface-montserrat'
-import 'typeface-merriweather'
+import "typeface-montserrat";
+import "typeface-merriweather";
 
-import profilePic from '../assets/profile-pic.jpg'
-import gitHubPic from '../assets/github.png'
-import twitterPic from '../assets/twitter.png'
-import linkedInPic from '../assets/linkedin.png'
-import { rhythm } from '../utils/typography'
+import profilePic from "../assets/profile-pic.jpg";
+import gitHubPic from "../assets/github.png";
+import twitterPic from "../assets/twitter.png";
+import linkedInPic from "../assets/linkedin.png";
+import { rhythm } from "../utils/typography";
 
-const gitHubUrl = 'https://github.com/paulgalow'
-const twitterUrl = 'https://twitter.com/paulgalow'
-const linkedinUrl = 'https://www.linkedin.com/in/paulgalow/'
+const gitHubUrl = "https://github.com/paulgalow";
+const twitterUrl = "https://twitter.com/paulgalow";
+const linkedinUrl = "https://www.linkedin.com/in/paulgalow/";
 
 class Bio extends React.Component {
   render() {
     return (
       <div
         style={{
-          display: 'flex',
+          display: "flex",
           marginBottom: rhythm(2.5),
         }}
       >
@@ -34,10 +34,10 @@ class Bio extends React.Component {
           }}
         />
         <p>
-          Hi, I'm Paul Galow, and I'm an engineer based in Berlin working in
-          DevOps, macOS administration and video engineering.
+          Hi, I'm Paul Galow, and I'm an engineer based in Berlin working in AWS
+          with a focus on Serverless. I'm also an IT manager and a Mac admin.
           <br />
-          <a href={gitHubUrl} style={{boxShadow: 'none'}}>
+          <a href={gitHubUrl} style={{ boxShadow: "none" }}>
             <img
               src={gitHubPic}
               alt={`GitHub`}
@@ -49,7 +49,7 @@ class Bio extends React.Component {
               }}
             />
           </a>
-          <a href={twitterUrl}style={{boxShadow: 'none'}}>
+          <a href={twitterUrl} style={{ boxShadow: "none" }}>
             <img
               src={twitterPic}
               alt={`Twitter`}
@@ -61,7 +61,7 @@ class Bio extends React.Component {
               }}
             />
           </a>
-          <a href={linkedinUrl} style={{boxShadow: 'none'}}>
+          <a href={linkedinUrl} style={{ boxShadow: "none" }}>
             <img
               src={linkedInPic}
               alt={`LinkedIn`}
@@ -75,8 +75,8 @@ class Bio extends React.Component {
           </a>
         </p>
       </div>
-    )
+    );
   }
 }
 
-export default Bio
+export default Bio;
