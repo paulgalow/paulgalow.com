@@ -57,11 +57,15 @@
 #     -e "JSON.parse(env).$2"
 # }
 
+# getJsonValue() {
+#   osascript -l 'JavaScript' - "$1" "$2" << 'EOF'
+#     function run(argv) {
+#       return JSON.parse(argv[0])[argv[1]] }
+# EOF
+# }
+
 getJsonValue() {
-  osascript -l 'JavaScript' - "$1" "$2" << 'EOF'
-    function run(argv) {
-      return JSON.parse(argv[0])[argv[1]] }
-EOF
+  osascript -l 'JavaScript' -e 'run = argv => JSON.parse(argv[0])[argv[1]]' "$1" "$2"
 }
 
 runTests() {
