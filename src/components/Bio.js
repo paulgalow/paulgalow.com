@@ -34,8 +34,9 @@ class Bio extends React.Component {
           }}
         />
         <p>
-          Hi, I'm Paul Galow, and I'm an engineer based in Berlin working in AWS
-          with a focus on Serverless. I'm also an IT manager and a Mac admin.
+          Hi, I'm Paul Galow, and I'm an engineer based in Berlin specialising
+          in AWS with a focus on Serverless. I'm also an IT manager and a Mac
+          admin.
           <br />
           <a href={gitHubUrl} style={{ boxShadow: "none" }}>
             <img
