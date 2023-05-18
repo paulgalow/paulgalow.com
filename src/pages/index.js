@@ -1,6 +1,5 @@
 import React from "react";
 import { Link, graphql } from "gatsby";
-import get from "lodash/get";
 import Helmet from "react-helmet";
 
 import Bio from "../components/Bio";
@@ -16,12 +15,9 @@ export const Head = () => (
 
 class BlogIndex extends React.Component {
   render() {
-    const siteTitle = get(this, "props.data.site.siteMetadata.title");
-    const siteDescription = get(
-      this,
-      "props.data.site.siteMetadata.description"
-    );
-    const posts = get(this, "props.data.allMarkdownRemark.edges");
+    const siteTitle = this.props.data?.site?.siteMetadata?.title;
+    const siteDescription = this.props.data?.site?.siteMetadata?.description;
+    const posts = this.props.data?.allMarkdownRemark?.edges;
 
     return (
       <Layout location={this.props.location}>
@@ -35,7 +31,7 @@ class BlogIndex extends React.Component {
         />
         <Bio />
         {posts.map(({ node }) => {
-          const title = get(node, "frontmatter.title") || node.frontmatter.slug;
+          const title = node.frontmatter?.title || node.frontmatter?.slug;
           return (
             <div key={node.frontmatter.slug}>
               <h3
