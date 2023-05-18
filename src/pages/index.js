@@ -1,32 +1,41 @@
-import React from 'react'
-import { Link, graphql } from 'gatsby'
-import get from 'lodash/get'
-import Helmet from 'react-helmet'
+import React from "react";
+import { Link, graphql } from "gatsby";
+import get from "lodash/get";
+import Helmet from "react-helmet";
 
-import Bio from '../components/Bio'
-import Layout from '../components/layout'
-import { rhythm } from '../utils/typography'
+import Bio from "../components/Bio";
+import Layout from "../components/layout";
+import { rhythm } from "../utils/typography";
+
+export const Head = () => (
+  <>
+    <html lang="en" />
+    <link href="https://mastodon.social/@paulgalow" rel="me" />
+  </>
+);
 
 class BlogIndex extends React.Component {
   render() {
-    const siteTitle = get(this, 'props.data.site.siteMetadata.title')
+    const siteTitle = get(this, "props.data.site.siteMetadata.title");
     const siteDescription = get(
       this,
-      'props.data.site.siteMetadata.description'
-    )
-    const posts = get(this, 'props.data.allMarkdownRemark.edges')
+      "props.data.site.siteMetadata.description"
+    );
+    const posts = get(this, "props.data.allMarkdownRemark.edges");
 
     return (
       <Layout location={this.props.location}>
         <Helmet
-          htmlAttributes={{ lang: 'en' }}
-          meta={[{ name: 'description', content: siteDescription }]}
-          meta={[{ name: 'referrer', content: 'no-referrer'}]}
+          htmlAttributes={{ lang: "en" }}
+          meta={[
+            { name: "description", content: siteDescription },
+            { name: "referrer", content: "no-referrer" },
+          ]}
           title={siteTitle}
         />
         <Bio />
         {posts.map(({ node }) => {
-          const title = get(node, 'frontmatter.title') || node.frontmatter.slug
+          const title = get(node, "frontmatter.title") || node.frontmatter.slug;
           return (
             <div key={node.frontmatter.slug}>
               <h3
@@ -34,21 +43,21 @@ class BlogIndex extends React.Component {
                   marginBottom: rhythm(1 / 4),
                 }}
               >
-                <Link style={{ boxShadow: 'none' }} to={node.frontmatter.slug}>
+                <Link style={{ boxShadow: "none" }} to={node.frontmatter.slug}>
                   {title}
                 </Link>
               </h3>
               <small>{node.frontmatter.date}</small>
               <p dangerouslySetInnerHTML={{ __html: node.excerpt }} />
             </div>
-          )
+          );
         })}
       </Layout>
-    )
+    );
   }
 }
 
-export default BlogIndex
+export default BlogIndex;
 
 export const pageQuery = graphql`
   query {
@@ -71,4 +80,4 @@ export const pageQuery = graphql`
       }
     }
   }
-`
+`;
