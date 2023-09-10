@@ -12,7 +12,7 @@ Earlier this year, the [BBC switched their streams](https://www.bbc.co.uk/sounds
 
 ## Introducing racoder
 
-[racoder](https://github.com/paulgalow/racoder) is a lightweight Node.js web server that leverages the powerful [FFmpeg](https://ffmpeg.org/) library to transcode internet radio and video streams into HTTP MP3 streams. It supports a variety of input stream formats, including HLS, MPEG-DASH, and RTMP – essentially, anything that FFmpeg can handle.
+[racoder](https://github.com/paulgalow/racoder) is a lightweight Node.js web server that leverages the powerful [FFmpeg](https://ffmpeg.org/) to transcode internet radio and video streams into HTTP MP3 streams. It supports a variety of input stream formats, including HLS, MPEG-DASH, and RTMP – essentially, anything that FFmpeg can handle.
 
 One of the key design considerations for racoder is efficiency. It only transcodes and consumes bandwidth when a consumer is actively using it. The server runs in a Docker container with just 256 MB of RAM and has minimal CPU usage. It's ideal for small, private deployments. It's not ideal for scale: each incoming request spawns a separate FFmpeg instance, consuming approximately an additional 20 MB of RAM and some network bandwidth per active stream.
 
