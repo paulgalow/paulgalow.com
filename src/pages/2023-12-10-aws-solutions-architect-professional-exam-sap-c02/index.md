@@ -6,13 +6,13 @@ date: "2023-12-10"
 
 ![A man studying in a cabin in the woods](./studying.png)
 
-"That's it, I'm out". Those were my initial thoughts when I attempted to answer the first questions of my exam. I had just waited for an hour to finally start the exam. One hour of waiting in lines and talking to support people online. Technical difficulties. I was stressed. But then things cleared up and I pushed through, question by question, until the end. And lo and behold! I passed and I was over the moon.
+"That's it, I'm out". Those were my initial thoughts when I attempted to answer the first questions of my exam. I had just waited an hour to finally start the exam. One hour of waiting in lines and talking to support people online. Technical difficulties. I was stressed. But then things cleared up and I pushed through, question by question, until the end. And lo and behold! I passed, and I was over the moon.
 
-So I'd like to share a bit of my background, what I did to prepare and some tips and recommendations I discovered along the way.
+So I'd like to share a bit about my background, what I did to prepare, and some tips and recommendations I discovered along the way.
 
 ## My background
 
-I have been architecting, building and administrating AWS-based greenfield solutions for traditional (EC2, Fargate) and event-driven workloads (Serverless, Lambda, DynamoDB, etc.) since 2015. Over time, I've honed my skills in a small company with an increasingly more regulated environment over time. However, I had little exposure to more enterprise-grade and hybrid solutions. Knowing this helped me identify my strengths and weaknesses to focus my exam preparation. I've been an AWS Certified Solutions Architect – Associate since 2016 with recertifications along the way. If you haven't passed this exam, I would highly recommend taking that one first as it will teach you the basics of many AWS services.
+I've been architecting, building and administrating AWS-based greenfield solutions for traditional (EC2, Fargate) and event-driven workloads (Serverless, Lambda, DynamoDB, etc.) since 2015. Over time, I've honed my skills in a small company with an increasingly regulated environment. However, I had little exposure to more enterprise-grade and hybrid solutions. Knowing this helped me identify my strengths and weaknesses to focus my exam preparation. I've been an AWS Certified Solutions Architect – Associate since 2016 with recertifications along the way. If you haven't passed this exam, I would highly recommend taking that one first as it will teach you the basics of many AWS services.
 
 ## Overview of SAP-C02
 
@@ -31,7 +31,7 @@ Also, according to the [official SAP-C02 exam guide](https://d1.awsstatic.com/tr
 
 ### Ongoing practice: Taking notes
 
-Early on in my career, I discovered the benefits of a personal note-taking system. I currently use Obsidian and have built up an extensive set of notes over the years. These come in handy when reviewing practical knowledge. I write down features and limitations and refer to other resources such as articles or videos. Limitations are especially helpful for the exam because AWS will test your knowledge around the edges of service capabilities. More on that later. This practice of writing things down as I learn them helps me solidify my knowledge over time. It is an ongoing practice that helps me to reduce the amount of stuff I have to learn specifically for the exam.
+Early in my career, I discovered the benefits of a personal note-taking system. I currently use Obsidian and have built up an extensive set of notes over the years. These come in handy when reviewing practical knowledge. I write down features and limitations and refer to other resources such as articles or videos. Limitations are especially helpful for the exam because AWS will test your knowledge around the edges of service capabilities. More on that later. This practice of writing things down as I learn them helps me solidify my knowledge over time. It is an ongoing practice that helps me reduce the amount of stuff I have to learn specifically for the exam.
 
 For AWS I have a separate notebook/folder with subfolders and lots of notes around services. This is my general pool of AWS knowledge, something I use every day to do my job, and the most detailed source of knowledge I maintain.
 
@@ -45,7 +45,7 @@ Early on in my AWS certification journey, I made the mistake of putting off prac
 
 This is the mode I start with and spend most of my time in. In this mode, I deliberately ignore time constraints and instead answer questions one at a time, carefully reviewing answers and explanations and then taking time to read/watch/do some more to further my understanding. This includes diving into AWS documentation, watching YouTube videos like re:Invent talks, and tutorial videos and last but not least trying things out in the AWS Console. I cannot stress that last point enough: Sometimes I find that just 10 minutes in the Console creates a much more robust mental model of a service than hours of watching and reading alone could ever do.
 
-This type of learning keeps me motivated and interested, because once I get a question wrong, I'm more engaged and want to find out the right answer.
+This type of learning keeps me motivated and interested, because once I get a question wrong, I'm more engaged and want to find the right answer.
 
 #### Mode 2: Real-world exam simulation
 
@@ -55,7 +55,7 @@ So what I do is take 1 to 1,5 hours at a time to answer as many questions as pos
 
 ## What to focus on
 
-AWS provides an overwhelming amount of information that is often dense and difficult to understand. Just take a look at the [EC2 User Guide for Linux instances](https://docs.aws.amazon.com/pdfs/AWSEC2/latest/UserGuide/ec2-ug.pdf#concepts) which is nearly 2600 pages long. This is an extreme example, but even at 300 pages per service this does not scale to 150 services. Not to mention the fact that these guides are change over time. Taking an online course is highly recommended to provide the baseline, but in my experience it is not enough. Here is why:
+AWS provides an overwhelming amount of information that is often dense and difficult to understand. Just take a look at the [EC2 User Guide for Linux instances](https://docs.aws.amazon.com/pdfs/AWSEC2/latest/UserGuide/ec2-ug.pdf#concepts) which is nearly 2600 pages long. This is an extreme example, but even 300 pages per service does not scale to 150 services. Not to mention that these guides change over time. Taking an online course is highly recommended to provide the baseline, but in my experience it is not enough. Here is why:
 
 The typical learning path of courses, videos, and documentation leads to a _siloed view of each service_. You learn about X and Y, but you don't know _how_ X connects with Y, and when and how to choose Z instead. This kind of knowledge is much harder to come by, much of it comes from experience, but hands-on labs and whitepapers can also be valuable.
 
@@ -73,7 +73,7 @@ Example: How to set up a Transit Gateway (service one) in combination with Direc
 
 ### Tip #3: Focus on the tradeoffs and differences between services
 
-Amazon's cross-functional company structure and microservices architecture has led to its famous two-pizza team rule. One consequence of this decentralized approach has been a wild proliferation of AWS services, sometimes with overlapping functionality. In most cases, there is more than one way to achieve the same result. I think of this focus on primitives, not products as tools like Lego bricks. So you have to know what each tool is good for and when to use another one. This means _knowing the tradeoffs and differences_ between services.
+Amazon's cross-functional company structure and microservices architecture has led to its famous two-pizza team rule. One consequence of this decentralized approach has been a wild proliferation of AWS services, sometimes with overlapping functionality. In most cases, there is more than one way to achieve the same result. I think of this focus on primitives, not products as tools like Lego bricks. So you have to know what each tool is good for and when to use another. This means _knowing the tradeoffs and differences_ between services.
 
 Examples: When to use which?
 
@@ -130,9 +130,9 @@ Here are some test exam courses that I have used and can recommend:
 
 ### Whitepapers/prescriptive guidance
 
-Reading whitepapers/prescriptive guidance can be daunting, but I find them to be valuable for their insight into the combination and tradeoffs of services that is rarely found elsewhere. Even if you only skim certain parts, I'd encourage you to take a look as it will not only prepare you for the exam, but also introduce you to well-architected solutions and best practices for your own projects.
+Reading whitepapers/prescriptive guidance can be daunting, but I find them valuable for their insight into the combination and tradeoffs of services that is rarely found elsewhere. Even if you only skim certain parts, I'd encourage you to take a look as it will not only prepare you for the exam, but also introduce you to well-architected solutions and best practices for your own projects.
 
-Here are a few I can recommend:
+Here are a few that I recommend:
 
 - [Whitepaper: Building a Scalable and Secure Multi-VPC AWS Network Infrastructure](https://docs.aws.amazon.com/whitepapers/latest/building-scalable-secure-multi-vpc-network-infrastructure/welcome.html)
   - This outlines several options for connecting VPCs: Peering, Transit Gateway, Transit VPC, PrivateLink, VPC sharing, Private NAT Gateway
